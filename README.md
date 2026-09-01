@@ -24,9 +24,10 @@ The first import used PyTorch Whisper `base` on CPU. The current pipeline uses
 API key is used for transcription.
 
 ```bash
-python3 -m pip install --user mlx-whisper
+python3.12 -m venv .venv
+.venv/bin/pip install mlx-whisper
 
-python3 scripts/process_voice_memos.py
+.venv/bin/python scripts/process_voice_memos.py
 ```
 
 The pipeline keeps idempotent state in `.state/ingest.sqlite`, invokes `pi`
@@ -35,7 +36,7 @@ with `iagent/standard` and `skills/x-wiki-compiler`, and pushes compiled changes
 Install the event hook with:
 
 ```bash
-python3 scripts/install_launch_agent.py
+.venv/bin/python scripts/install_launch_agent.py
 ```
 
 The launch agent watches the local Voice Memos directory and also performs a

@@ -34,7 +34,7 @@ def main() -> int:
     payload = {
         "Label": LABEL,
         "ProgramArguments": [
-            "/usr/bin/python3",
+            str(repo / ".venv" / "bin" / "python"),
             str(repo / "scripts" / "process_voice_memos.py"),
         ],
         "WorkingDirectory": str(repo),
@@ -47,13 +47,17 @@ def main() -> int:
         "EnvironmentVariables": {
             "HOME": str(Path.home()),
             "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin",
-            "PYTHONPATH": str(Path.home() / "Library/Python/3.9/lib/python/site-packages"),
             "PYTHONUNBUFFERED": "1",
         },
     }
     plist_path.write_bytes(plistlib.dumps(payload, fmt=plistlib.FMT_XML))
     domain = f"gui/{os.getuid()}"
-    subprocess.run(["launchctl", "bootout", domain, str(plist_path)], check=False)
+    subprocess.run(
+        ["launchctl", "bootout", domain, str(plist_path)],
+        check=False,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     subprocess.run(["launchctl", "bootstrap", domain, str(plist_path)], check=True)
     subprocess.run(["launchctl", "enable", f"{domain}/{LABEL}"], check=True)
     print(plist_path)
