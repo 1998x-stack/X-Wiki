@@ -28,7 +28,17 @@ Every compiled page ends with `## 来源`. Add a source only when it supports co
 - Create an entity only when tracking that entity improves retrieval or relationships.
 - Create a synthesis only when at least two sources or concepts gain meaning from being connected.
 - Keep source-specific chronology in raw evidence unless it is itself a reusable project or decision record.
+- Record a contradiction on the most relevant durable page; do not create a separate contradiction page.
+- Prefer a no-op when a source only repeats knowledge already represented accurately.
+
+## Public Boundary
+
+`wiki/` and `index.md` are published through GitHub Pages. `raw/voice/` stays local.
+
+- Distill private experiences into reusable ideas when the identifying detail is not necessary.
+- Never move local audio paths, credentials, contact information, or private identifiers into public pages.
+- Source links may point to local raw paths; the site renderer converts them into non-clickable local-evidence labels.
 
 ## Quality Check
 
-Before finishing, verify that no raw file changed, new links resolve, duplicate concepts were not introduced, interpretation is distinguishable from source claims, and the index exposes genuinely important new pages.
+Before finishing, verify that no raw file changed, new links resolve, duplicate concepts were not introduced, interpretation is distinguishable from source claims, the index exposes only genuinely important pages, and public text contains no unnecessary private detail.

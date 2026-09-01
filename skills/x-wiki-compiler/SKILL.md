@@ -1,28 +1,47 @@
 ---
 name: x-wiki-compiler
-description: Compile new raw voice transcripts and reference notes into an existing linked X-Wiki. Use when ingesting sources into this repository's durable concepts, entities, projects, decisions, synthesis pages, and index; do not use for transcription or publishing.
+description: Compile new raw voice transcripts and reference notes into the linked X-Wiki knowledge layer. Use when evidence should update durable concepts, entities, projects, decisions, synthesis pages, and the index; do not use for transcription, raw-source cleanup, Git, or publishing.
 ---
 
 # X-Wiki Compiler
 
-Turn newly ingested evidence into durable knowledge without making one permanent summary page per recording.
+Compile evidence into durable knowledge. A recording is an input, not automatically a permanent page.
 
-## Workflow
+## Before Editing
 
-1. Read the source files named in the request, then inspect related pages under `wiki/` and `index.md`.
-2. Read [references/wiki-schema.md](references/wiki-schema.md) before choosing page types or links.
-3. Extract claims, recurring ideas, named entities, decisions, contradictions, and open questions.
-4. Merge evidence into existing pages when the idea already has a durable home. Create a page only when it will remain useful beyond one source.
-5. Update `index.md` when the knowledge map changes and append a concise entry to `log.md`.
+1. Read every source named in the request.
+2. Read [references/wiki-schema.md](references/wiki-schema.md).
+3. Inspect `index.md`, related `wiki/` pages, and their existing `## 来源` sections.
+4. Decide whether each source adds a new claim, strengthens an existing idea, contradicts it, or adds no durable knowledge.
 
-## Invariants
+It is valid to make no Wiki edits when existing pages already represent the source accurately. Do not create content merely to demonstrate activity.
 
-- Treat `raw/` as immutable evidence. Never edit, move, rename, or delete it.
+## Compile
+
+- Merge recurring ideas into their existing durable page.
+- Create a page only when the subject will be useful beyond one source and cannot fit an established page.
+- Keep source narrative and timestamps in `raw/`; put interpretations, relationships, decisions, and open questions in `wiki/`.
+- Distinguish source claims from interpretation. Preserve contradictions instead of resolving them without evidence.
+- Treat low-confidence names, numbers, quotations, and historical details as uncertain. Use neutral wording or record an open question.
+- Keep prose concise, concrete, and primarily Chinese. Use stable ASCII file slugs.
+- Update `index.md` only when navigation materially changes.
+- Append a dated `log.md` entry only when pages were materially edited.
+
+## Boundaries
+
+- Never edit, move, rename, or delete `raw/`.
 - Edit only `wiki/`, `index.md`, and `log.md`.
-- Write in Chinese unless a source or established page clearly requires another language.
-- Preserve uncertainty. Correct obvious transcription mistakes only in the interpretation layer and do not silently present uncertain names or claims as facts.
-- Every material claim added to `wiki/` must remain traceable through a `## 来源` section with repository-relative wiki links.
-- Prefer improving a small number of connected pages over generating many shallow pages.
-- Do not run Git, publish, install dependencies, or access network services. The calling pipeline owns those side effects.
+- Never run Git, publish, install dependencies, invoke external services, or change automation configuration.
+- The compiled Wiki is published on GitHub Pages. Do not carry credentials, private identifiers, precise addresses, account details, or unnecessary personal specifics from raw evidence into `wiki/`.
+- Keep every material claim traceable through a `## 来源` section using repository-root-relative wiki links.
+- Do not silently replace a stronger existing formulation with a weaker summary.
 
-Finish by reporting which pages were created or materially updated and which questions remain unresolved.
+## Validate
+
+Before finishing:
+
+1. Confirm no raw file changed.
+2. Resolve every new Wiki link or mark the relationship as an open question without creating a broken link.
+3. Check that a new page does not duplicate an existing concept under another name.
+4. Check that public text reveals no unnecessary private source detail.
+5. Report created pages, materially updated pages, no-op decisions, and unresolved uncertainties.

@@ -1,4 +1,5 @@
 .state/
+.env
 .workbuddy-ai/
 .venv/
 .site-docs/

@@ -1,19 +1,65 @@
 site_name: X-Wiki
-site_description: Local-first voice-to-knowledge wiki
+site_description: 从本地语音证据持续编译而成的个人知识 Wiki
 site_url: https://1998x-stack.github.io/X-Wiki/
+repo_url: https://github.com/1998x-stack/X-Wiki
+repo_name: 1998x-stack/X-Wiki
 docs_dir: .site-docs
 site_dir: site
+copyright: 本地优先 · 原始语音证据不公开
+nav:
+  - 首页: index.md
+  - 综合:
+      - 语音到知识编译器: wiki/synthesis/voice-to-knowledge-compiler.md
+  - 概念:
+      - 自由与必然: wiki/concepts/freedom-and-necessity.md
+      - 每日操作系统: wiki/concepts/daily-operating-system.md
+      - 位置与主动权: wiki/concepts/positioning-and-agency.md
+  - 人物:
+      - 李斯: wiki/entities/li-si.md
+      - 荀子: wiki/entities/xunzi.md
+      - 韩非: wiki/entities/han-fei.md
+      - 吕不韦: wiki/entities/lu-buwei.md
+  - 决策:
+      - 本地优先语音管道: wiki/decisions/0001-local-first-voice-memo-pipeline.md
 theme:
   name: material
   language: zh
+  custom_dir: site_overrides
+  favicon: site_assets/images/x-wiki-og.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色模式
   features:
     - navigation.indexes
     - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
     - search.highlight
+    - search.share
+    - content.code.copy
+    - content.tooltips
 plugins:
   - search
+extra_css:
+  - site_assets/stylesheets/extra.css
 markdown_extensions:
   - admonition
   - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
   - toc:
       permalink: true

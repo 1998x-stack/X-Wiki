@@ -12,8 +12,16 @@
 - 将本地转写从 CPU/PyTorch Whisper `base` 升级为 Apple MLX 上的 Whisper Large V3 Turbo。
 - 新增幂等 SQLite 状态、Voice Memos 目录触发与五分钟恢复扫描。
 - 新增 `x-wiki-compiler` skill，并由 Python 脚本通过 `pi` 加载，固定使用 `iagent/standard` 编译知识层。
-- 新增 GitHub 仓库推送、GitHub Pages 构建与 GitHub Wiki 同步配置。
-- Git、Pages 和 GitHub Wiki 只发布知识层；`raw/voice/` 证据层仅保留在本机。
+- 新增 GitHub 仓库推送与 GitHub Pages 构建配置，不启用 GitHub Wiki。
+- Git 和 Pages 只发布知识层；`raw/voice/` 证据层仅保留在本机。
+
+## 2026-09-01 自动化可靠性复审
+
+- 移除用户名、Python 和 Homebrew 绝对路径依赖，新增可选 `.env`，默认中文转写。
+- Raw 改为不可变写入；转写变化产生 revision，所有文本与状态文件使用原子写入。
+- 增加文件稳定性检测、单文件失败汇总、模型超时、编译边界和自动提交白名单。
+- launchd 同时使用目录监听、五分钟扫描和唤醒后的日历补偿扫描。
+- GitHub Pages 增加响应式首页、深浅主题、搜索、社交分享图和本地证据隐私标识。
 
 ## 2026-09-01
 
