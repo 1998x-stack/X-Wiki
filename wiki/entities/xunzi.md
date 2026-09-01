@@ -8,7 +8,7 @@
 
 ## 关联概念
 
-- [[positioning-and-agency]]
+- [[wiki/concepts/positioning-and-agency]]
 
 ## 来源
 

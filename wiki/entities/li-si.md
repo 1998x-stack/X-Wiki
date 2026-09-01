@@ -19,8 +19,8 @@
 
 ## 关联概念
 
-- [[positioning-and-agency]]
-- [[freedom-and-necessity]]
+- [[wiki/concepts/positioning-and-agency]]
+- [[wiki/concepts/freedom-and-necessity]]
 
 ## 来源
 
