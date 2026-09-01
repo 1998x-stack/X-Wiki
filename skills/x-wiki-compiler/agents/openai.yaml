@@ -1,0 +1,4 @@
+interface:
+  display_name: "X-Wiki Compiler"
+  short_description: "Compile raw evidence into a linked personal wiki"
+  default_prompt: "Use $x-wiki-compiler to compile new raw sources into the local wiki."

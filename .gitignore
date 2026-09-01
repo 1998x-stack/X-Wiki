@@ -1,0 +1,13 @@
+.state/
+.workbuddy-ai/
+.venv/
+.site-docs/
+site/
+.DS_Store
+__pycache__/
+raw/voice/
+.codegraph
+.omo/
+*.m4a
+*.wav
+*.mp3

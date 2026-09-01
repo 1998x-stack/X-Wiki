@@ -1,0 +1,19 @@
+site_name: X-Wiki
+site_description: Local-first voice-to-knowledge wiki
+site_url: https://1998x-stack.github.io/X-Wiki/
+docs_dir: .site-docs
+site_dir: site
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.indexes
+    - navigation.sections
+    - search.highlight
+plugins:
+  - search
+markdown_extensions:
+  - admonition
+  - attr_list
+  - toc:
+      permalink: true
