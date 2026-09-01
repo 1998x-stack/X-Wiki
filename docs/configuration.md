@@ -38,12 +38,17 @@ Shell 环境变量优先于 `.env`。不要在 `.env` 中保存 GitHub token、�
 
 ## 通用性（无需 `.env`）
 
-默认值在任何 Mac 上均可直接运行：转写目录和 `pi` 都从 `Path.home()`/`PATH`
-自动发现，默认语言是中文（`zh`），模型为本地 MLX Whisper。`.env` 只用于覆盖，
-不是必需文件。唯一的机器相关前提是四个外部依赖已安装：Apple Silicon、`ffmpeg`、
-`mlx-whisper`（python 依赖）和 `pi`（含 `iagent/standard` 凭据）。`pi` 默认按
-`PATH` → `~/.local/bin/pi` → `/opt/homebrew/bin/pi` → `/usr/local/bin/pi` 查找，
-装在别处时用 `XWIKI_PI_BIN` 指定。
+MLX Whisper 在本机推理，不使用 OpenAI API key。`pi` 的模型凭据由 `pi` 自己的
+配置管理（`~/.pi/agent/models.json`，通常以 `$VAR` 环境变量占位符形式引用，
+例如 `IAUTO_API_KEY`），不应写入本仓库或 `.env`。
+
+> **launchd 与凭据**：`pi` 的 provider 凭据往往是当前登录 Shell 的环境变量
+> （如 `IAUTO_API_KEY`），而 launchd 用干净环境启动进程。为了让常驻的
+> `com.xwiki.voice-ingest` 能调用 `iagent/standard` 编译，运行
+> `scripts/install_launch_agent.py` 时会把 provider 配置引用的那些 `$VAR`
+> 环境变量一并写入 launchd 的 plist（`~/Library/LaunchAgents/...plist`，
+> 权限设为仅属主可读）。因此**先登录/导出好凭据，再安装刷新服务**；若参考的
+> 环境变量未设置，安装脚本会在 stderr 给出警告，此时 Agent 将无法编译。
 
 ## 权限
 

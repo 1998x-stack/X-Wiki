@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import plistlib
 import shutil
@@ -26,6 +27,65 @@ def launchctl(
         stdout=subprocess.DEVNULL if quiet else None,
         stderr=subprocess.DEVNULL if quiet else None,
     )
+
+
+def provider_env_refs(
+    settings: Settings, models_path: Path | None = None
+) -> tuple[list[str], list[str]]:
+    """Read ``models_path`` (default ~/.pi/agent/models.json) and return the
+    env var names the configured provider references as ``$VAR`` placeholders,
+    split into (present, missing).
+
+    pi provider configs reference env vars as string placeholders such as
+    ``{"apiKey": "$IAUTO_API_KEY"}``. These live only in the interactive
+    session's environment, so without copying them into the launchd plist the
+    nightly compile fails with "No API key found for <provider>".
+    """
+    refs: set[str] = set()
+    models_path = models_path or Path.home() / ".pi" / "agent" / "models.json"
+    try:
+        data = json.loads(models_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return [], []
+    provider = data.get("providers", {}).get(settings.llm_provider, {})
+    if not provider:
+        return [], []
+
+    def scan(value: object) -> None:
+        if isinstance(value, dict):
+            for item in value.values():
+                scan(item)
+        elif isinstance(value, list):
+            for item in value:
+                scan(item)
+        elif isinstance(value, str) and value.startswith("$"):
+            name = value[1:]
+            if name:
+                refs.add(name)
+
+    scan(provider)
+    present = sorted(name for name in refs if os.environ.get(name))
+    missing = sorted(name for name in refs if not os.environ.get(name))
+    return present, missing
+
+
+def provider_credential_envs(
+    settings: Settings, models_path: Path | None = None
+) -> dict[str, str]:
+    """Inherit launchd env vars that pi's configured LLM provider resolves at
+    runtime from the parent shell so the headless agent can authenticate."""
+    present, _missing = provider_env_refs(settings, models_path)
+    return {name: os.environ[name] for name in present}
+
+
+def missing_credential_envs(
+    settings: Settings, models_path: Path | None = None
+) -> list[str]:
+    """Env var names the provider references but that are unset in the current
+    session, so launchd would compile without a key."""
+    _present, missing = provider_env_refs(settings, models_path)
+    return missing
+
 
 
 def build_payload(settings: Settings, python: Path) -> dict:
@@ -56,6 +116,7 @@ def build_payload(settings: Settings, python: Path) -> dict:
         "XWIKI_GIT_REMOTE": settings.git_remote,
         "XWIKI_GIT_BRANCH": settings.git_branch,
     }
+    environment.update(provider_credential_envs(settings))
     return {
         "Label": LABEL,
         "ProgramArguments": [
@@ -107,7 +168,20 @@ def main() -> int:
     python = Path(sys.executable)
     if not (settings.repo / "scripts" / "process_voice_memos.py").is_file():
         parser.error(f"pipeline script not found under {settings.repo}")
-    plist_path.write_bytes(plistlib.dumps(build_payload(settings, python), fmt=plistlib.FMT_XML))
+    payload = build_payload(settings, python)
+    plist_path.write_bytes(plistlib.dumps(payload, fmt=plistlib.FMT_XML))
+    # The plist now embeds LLM provider credentials; keep it owner-readable only.
+    plist_path.chmod(0o600)
+    missing = missing_credential_envs(settings)
+    if missing:
+        print(
+            "Warning: launchd agent will not be able to compile the wiki; "
+            f"provider {settings.llm_provider!r} references env vars that are "
+            f"unset in the current session: {sorted(missing)}. "
+            "Export them (or run `pi auth` to store credentials) and re-run "
+            "install_launch_agent.py.",
+            file=sys.stderr,
+        )
     launchctl("bootstrap", domain, str(plist_path))
     launchctl("enable", service)
     if not args.no_start:

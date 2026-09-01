@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sqlite3
 import subprocess
 import time
@@ -152,3 +153,70 @@ def test_transient_compile_timeout_returns_temp_failure(
     ).fetchone()[0]
     connection.close()
     assert status == "raw_ready"
+
+
+def test_publish_pending_row_is_recovered_without_retranscription(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A recording left in `publish_pending` by an interrupted push must be
+    retried (no-op here) and converge to `compiled`, never re-transcribed."""
+    recordings_dir = tmp_path / "recordings"
+    recordings_dir.mkdir()
+    (recordings_dir / "memo.m4a").write_bytes(b"audio")
+    raw_path = tmp_path / "raw" / "voice" / "2025" / "01" / "memo.md"
+    raw_path.parent.mkdir(parents=True)
+    raw_path.write_text("evidence", encoding="utf-8")
+
+    recording = {
+        "ZUNIQUEID": "ABC123",
+        "ZPATH": "memo.m4a",
+        "ZDATE": 0.0,
+        "ZDURATION": 1.0,
+        "ZCUSTOMLABEL": "memo",
+    }
+    monkeypatch.setattr(process_voice_memos, "discover_recordings", lambda wd: [recording])
+    monkeypatch.setattr(process_voice_memos, "stable_audio_hash", lambda p, s: "deadbeef")
+
+    # Re-transcribing a publish_pending row would raise here (fail loudly).
+    def no_retranscribe(*_a, **_k) -> None:
+        raise AssertionError("publish_pending row must not be re-transcribed")
+
+    monkeypatch.setattr(process_voice_memos, "transcribe", no_retranscribe)
+    monkeypatch.setattr(process_voice_memos, "git_publish", lambda *a, **k: None)
+    for name in list(os.environ):
+        if name.startswith("XWIKI_"):
+            monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("XWIKI_GIT_PUSH", "true")
+
+    # Load settings after pinning the environment so git_push is deterministic.
+    settings = process_voice_memos.Settings.load(tmp_path)
+    fingerprint = process_voice_memos.transcription_fingerprint(
+        settings.whisper_model, settings.language
+    )
+    connection = process_voice_memos.open_state(tmp_path / ".state" / "ingest.sqlite")
+    connection.execute(
+        "insert into recordings ("
+        " recording_id, audio_sha256, audio_path, raw_path, transcript_path, "
+        " model, status, updated_at) values (?,?,?,?,?,?,?,?)",
+        (
+            "ABC123",
+            "deadbeef",
+            str(recordings_dir / "memo.m4a"),
+            str(raw_path),
+            None,
+            fingerprint,
+            "publish_pending",
+            "2026-01-01T00:00:00+00:00",
+        ),
+    )
+    connection.commit()
+
+    args = process_voice_memos.build_parser(settings).parse_args(
+        ["--recordings-dir", str(recordings_dir)]
+    )
+    assert process_voice_memos.process(args, settings) == 0
+    connection.close()
+    status = sqlite3.connect(tmp_path / ".state" / "ingest.sqlite").execute(
+        "select status from recordings where recording_id = ?", ("ABC123",)
+    ).fetchone()[0]
+    assert status == "compiled"

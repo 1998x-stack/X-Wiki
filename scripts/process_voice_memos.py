@@ -285,7 +285,7 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                     and row
                     and row[0] == audio_hash
                     and (row[1] == model_fingerprint or legacy_match)
-                    and row[2] in {"raw_ready", "compiled"}
+                    and row[2] in {"raw_ready", "compiled", "publish_pending"}
                 ):
                     if legacy_match:
                         connection.execute(
