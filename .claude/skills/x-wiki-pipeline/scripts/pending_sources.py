@@ -32,10 +32,10 @@ def main() -> int:
     args = parser.parse_args()
     repo = args.repo or find_repo(Path(__file__).resolve().parents[0])
     if repo is None:
-        raise SystemExit("无法定位仓库根（找不到同时含 wiki/ 与 scripts/ 的目录）。")
+        raise SystemExit("无法定位仓库根 (需同时含 wiki/ 与 scripts/)")
     db = repo / ".state" / "ingest.sqlite"
     if not db.is_file():
-        print(f"尚无摄取状态库：{db}")
+        print(f"尚无摄取状态库: {db}")
         return 0
     connection = sqlite3.connect(db)
     try:
@@ -60,9 +60,11 @@ def main() -> int:
             print(f"[失败]   {raw_path}  {last_error or ''}")
             summarized = True
     if not summarized and rows:
-        print("（没有待编译/待发布/失败项，全部已编译。）")
+        print("没有待编译/待发布/失败项 (全部已编译)")
     print("-" * 60)
-    print("counts: " + "  ".join(f"{STATUS_LABELS.get(k, k)}={v}" for k, v in sorted(counts.items())))
+    print("counts: " + "  ".join(
+        f"{STATUS_LABELS.get(k, k)}={v}" for k, v in sorted(counts.items())
+    ))
     return 0
 
 
