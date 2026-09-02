@@ -1,5 +1,5 @@
 <div class="xw-cover" markdown>
-![X-Wiki：从语音到相互连接的知识](site_assets/images/x-wiki-og.png)
+![X-Wiki：从语音到相互连接的知识](sites/assets/images/x-wiki-og.png)
 </div>
 
 # X-Wiki

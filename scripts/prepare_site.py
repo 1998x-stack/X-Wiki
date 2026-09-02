@@ -43,10 +43,10 @@ def prepare(repo: Path, output: Path) -> None:
     reset_output(output, repo)
     shutil.copy2(repo / "index.md", output / "index.md")
     shutil.copytree(repo / "wiki", output / "wiki")
-    assets = repo / "site_assets"
+    assets = repo / "sites" / "assets"
     if assets.is_dir():
-        shutil.copytree(assets, output / "site_assets")
-    not_found = repo / "site_content" / "404.md"
+        shutil.copytree(assets, output / "sites" / "assets")
+    not_found = repo / "sites" / "content" / "404.md"
     if not_found.is_file():
         shutil.copy2(not_found, output / "404.md")
     for path in output.rglob("*.md"):
@@ -62,7 +62,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     repo = args.repo.expanduser().resolve()
-    prepare(repo, (args.output or repo / ".site-docs").expanduser().resolve())
+    prepare(repo, (args.output or repo / "sites" / ".site-docs").expanduser().resolve())
     return 0
 
 

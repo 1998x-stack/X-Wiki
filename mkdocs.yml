@@ -3,8 +3,8 @@ site_description: 从本地语音证据持续编译而成的个人知识 Wiki
 site_url: https://1998x-stack.github.io/X-Wiki/
 repo_url: https://github.com/1998x-stack/X-Wiki
 repo_name: 1998x-stack/X-Wiki
-docs_dir: .site-docs
-site_dir: site
+docs_dir: sites/.site-docs
+site_dir: sites/site
 copyright: 本地优先 · 原始语音证据不公开
 nav:
   - 首页: index.md
@@ -24,8 +24,8 @@ nav:
 theme:
   name: material
   language: zh
-  custom_dir: site_overrides
-  favicon: site_assets/images/x-wiki-og.png
+  custom_dir: sites/overrides
+  favicon: sites/assets/images/x-wiki-og.png
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -54,7 +54,7 @@ theme:
 plugins:
   - search
 extra_css:
-  - site_assets/stylesheets/extra.css
+  - sites/assets/stylesheets/extra.css
 markdown_extensions:
   - admonition
   - attr_list

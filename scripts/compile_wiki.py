@@ -79,7 +79,7 @@ def compile_wiki(
     pi_bin: str,
     timeout_seconds: int,
 ) -> None:
-    skill = repo / "skills" / "x-wiki-compiler"
+    skill = repo / "scripts" / "skills" / "x-wiki-compiler"
     if not skill.is_dir():
         raise FileNotFoundError(f"X-Wiki skill not found: {skill}")
     pi_path = Path(pi_bin).expanduser()

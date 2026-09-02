@@ -20,16 +20,16 @@ GitHub Pages 只包含编译后的 `wiki/`；音频、转写缓存、`raw/voice/
 
 ```bash
 python3.12 -m venv .venv
-.venv/bin/pip install -r requirements-dev.txt
-.venv/bin/pip install -r requirements-site.txt
+.venv/bin/pip install -r scripts/requirements-dev.txt
+.venv/bin/pip install -r sites/requirements-site.txt
 cp .env.example .env          # 可选；默认已经是中文转写
 .venv/bin/python scripts/doctor.py
 .venv/bin/python scripts/process_voice_memos.py
 .venv/bin/python scripts/install_launch_agent.py
 ```
 
-配置、权限和移植说明见 [docs/configuration.md](docs/configuration.md)，自动运行、
-睡眠行为和故障恢复见 [docs/automation.md](docs/automation.md)。
+配置、权限和移植说明见 [scripts/docs/configuration.md](scripts/docs/configuration.md)，自动运行、
+睡眠行为和故障恢复见 [scripts/docs/automation.md](scripts/docs/automation.md)。
 
 ## 常用命令
 

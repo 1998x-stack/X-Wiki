@@ -29,16 +29,16 @@ def test_prepare_copies_site_assets_and_never_raw(tmp_path: Path) -> None:
     repo = tmp_path / "repo"
     output = tmp_path / "output"
     (repo / "wiki").mkdir(parents=True)
-    (repo / "site_assets" / "images").mkdir(parents=True)
+    (repo / "sites" / "assets" / "images").mkdir(parents=True)
     (repo / "raw").mkdir()
     (repo / "index.md").write_text("# Home", encoding="utf-8")
     (repo / "wiki" / "topic.md").write_text("# Topic", encoding="utf-8")
-    (repo / "site_assets" / "images" / "image.txt").write_text("asset", encoding="utf-8")
+    (repo / "sites" / "assets" / "images" / "image.txt").write_text("asset", encoding="utf-8")
     (repo / "raw" / "private.md").write_text("secret", encoding="utf-8")
 
     prepare(repo, output)
 
-    assert (output / "site_assets" / "images" / "image.txt").is_file()
+    assert (output / "sites" / "assets" / "images" / "image.txt").is_file()
     assert not (output / "raw").exists()
 
 
