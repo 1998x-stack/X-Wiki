@@ -99,8 +99,8 @@ HN 用户更容易追问：
 
 **HN 正确叙事**：问题、架构权衡、可复现实验、失败案例与数据边界，不是流行语堆砌。标题示例：
 
-- 路径 A：\`Show HN: X-Wiki, a voice-to-Markdown knowledge pipeline with versioned releases\`
-- 路径 B：\`Show HN: X-Wiki – review evidence before your AI updates your notes\`（B 真实存在后才使用）
+- 路径 A：`Show HN: X-Wiki, a voice-to-Markdown knowledge pipeline with versioned releases`
+- 路径 B：`Show HN: X-Wiki – review evidence before your AI updates your notes`（B 真实存在后才使用）
 
 发布中应主动披露“合成 demo”“pi external provider 可选”“当前支持 Mac”及许可证/系统要求。准备 README 中一条 5 分钟可复现的真实路径；如果需要数十行装机命令，公开地展示限制并寻求反馈，不要隐藏。
 
@@ -123,9 +123,9 @@ HN 用户更容易追问：
 **认知层**：查看访客来源与产品定位是否理解；当前 UX-001 演示刻意**不采集任何遥测**。在用户同意前不能暗中加追踪。首阶段用可见手工测试；未来只有在匿名化告知/同意机制下才增加漏斗事件。
 
 **转化层**（真实产品 Beta）：
-- \`visit → demo_start → evidence_open → demo_complete\`：网页 Demo 完成，不代表真实功能激活；
-- \`installer_start → local_source_stored → first_real_proposal → first_approved_revision\`：真实用户激活；
-- \`approved_revision → revisited_revision within 28d\`：长期价值。
+- `visit → demo_start → evidence_open → demo_complete`：网页 Demo 完成，不代表真实功能激活；
+- `installer_start → local_source_stored → first_real_proposal → first_approved_revision`：真实用户激活；
+- `approved_revision → revisited_revision within 28d`：长期价值。
 - 容忍“no_change”合法结果，不能以没有生成提案将其算为管道失败。
 
 **北极星**：真正重用过的、经用户批准的知识节点（按有效用户计）。辅助指标：引用正确率、错误自动行动率、隐私事件数、提案拒绝理由、未处理建议累积量、卸载/导出成功率。
