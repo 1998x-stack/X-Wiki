@@ -37,7 +37,7 @@ compatibility: >-
 ```bash
 .venv/bin/python scripts/doctor.py                          # preflight
 .venv/bin/python scripts/process_voice_memos.py --skip-compile --skip-push  # 只转录
-.venv/bin/python scripts/prepare_site.py && .venv/bin/mkdocs build --strict # 建站校验
+.venv/bin/python scripts/wiki_lint.py --strict && .venv/bin/python scripts/prepare_site.py --strict && .venv/bin/mkdocs build --strict # 建站校验
 .venv/bin/ruff check .
 .venv/bin/pytest
 ```

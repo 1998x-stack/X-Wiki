@@ -25,7 +25,7 @@ Personal LLM wiki: iPhone Voice Memos → local MLX Whisper → immutable raw ev
 - `scripts/compile_wiki.py` shells out to `pi` with `scripts/skills/x-wiki-compiler` and `iagent/standard`, restricted to tools `read,write,edit,grep,find,ls`. It verifies `raw/` is byte-identical before/after and that the model touched nothing outside `wiki/`, `index.md`, `log.md`.
 - **Credential inheritance for launchd:** the headless compile needs the LLM provider's API key. `install_launch_agent.py` reads provider config from `~/.pi/agent/models.json` and copies each `$VAR` env ref (e.g. `IAUTO_API_KEY`) it finds in the current shell into the launchd plist (`chmod 0600`). Export/authenticate credentials *before* (re)installing; if a referenced env var is unset the installer warns on stderr and headless compilation will be unable to authenticate.
 - **Exit code 75 (temporary failure):** the pipeline pauses and retries next scan when knowledge files have uncommitted edits, or when compilation/push fails transiently (pi timeout, Mac asleep mid-run, network blip) — sources stay `raw_ready`/`publish_pending`. Hand-editing `wiki/`, `index.md`, or `log.md` pauses automation until committed.
-- Automatic Git commits and pushes stage only `wiki/`, `index.md`, `log.md` to `XWIKI_GIT_REMOTE`/`XWIKI_GIT_BRANCH`. Never stage audio, `.state/`, `raw/voice/`, or the venv - publishing is pipeline-owned and you should never publish from a session yourself. CI (`.github/workflows/quality.yml`) runs `ruff check .` + `pytest` on push to `main` and PRs; `.github/workflows/pages.yml` builds the site from `prepare_site.py` + `mkdocs build --strict`.
+- Automatic Git commits and pushes stage only `wiki/`, `index.md`, `log.md` to `XWIKI_GIT_REMOTE`/`XWIKI_GIT_BRANCH`. Never stage audio, `.state/`, `raw/voice/`, or the venv - publishing is pipeline-owned and you should never publish from a session yourself. CI (`.github/workflows/quality.yml`) runs `ruff check .`, `pytest`, strict wiki lint, and a strict site build on push to `main` and PRs; `.github/workflows/pages.yml` builds the site from `prepare_site.py` + `mkdocs build --strict`.
 - Paths derive from the repo and `Path.home()`; never hardcode a username or Homebrew prefix. Repo-local `.env` overrides defaults (shell env wins; keep secrets out of `.env`). GitHub Pages (via `.github/workflows/pages.yml`) is the only public output - no GitHub Wiki sync.
 
 ## Commands
@@ -35,7 +35,7 @@ Personal LLM wiki: iPhone Voice Memos → local MLX Whisper → immutable raw ev
 .venv/bin/python scripts/process_voice_memos.py --skip-compile --skip-push
 .venv/bin/ruff check .                       # lint; line-length 100, py310 target
 .venv/bin/pytest                             # offline (imports scripts/ via conftest; needs only git + tmp dirs)
-.venv/bin/python scripts/prepare_site.py && .venv/bin/mkdocs build --strict   # validates all wikilinks
+.venv/bin/python scripts/wiki_lint.py --strict && .venv/bin/python scripts/prepare_site.py --strict && .venv/bin/mkdocs build --strict   # validates all wikilinks
 
 # launchd service com.xwiki.voice-ingest
 .venv/bin/python scripts/install_launch_agent.py           # install/refresh (inherits provider $VAR creds; --remove uninstalls, --no-start skips start)
