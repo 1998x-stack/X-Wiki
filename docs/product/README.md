@@ -9,6 +9,10 @@
 - [现有 PRD v1](PRD.md)：第一阶段的产品范围与静态演示验收。
 - [现有发布可信度架构](../architecture/deployment-verification.md)：GitHub Pages 的内容指纹/HTTPS 读回。不能用该工程机制代替产品级的每用户权限控制。
 
+## 当前工程演进
+
+- [ARCH-00B SQLite 持久化与旧库只读迁移](stages/ARCH-00B-Implementation.md)：新产品数据库与已有 Voice Memos 处理记录隔离；尚未完成私有发布授权。
+
 ## 本次深度研究与待实现规格
 
 1. [Product Hunt × Hacker News 评论证据与需求研究](research/PH-HN-2026.md)：逐条用户评价、原始讨论链接、证据级别、竞争性反例、优先级和调研计划。

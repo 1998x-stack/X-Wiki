@@ -18,6 +18,8 @@ jobs:
           python-version: "3.12"
       - run: pip install pytest==8.4.2 ruff==0.13.2 jsonschema==4.25.1
       - run: pip install -e .
+      - run: pip wheel --no-deps . --wheel-dir /tmp/xwiki-wheel
+      - run: python -m xwiki.infrastructure.sqlite.cli --help
       - run: ruff check .
       - run: pytest
       - run: python scripts/evaluate_wiki.py

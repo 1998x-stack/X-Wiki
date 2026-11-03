@@ -103,3 +103,21 @@ ARCH-00, UX-002/003/004/005 and REL-006 into 27 proposed reviewable PRs,
 including new and modified file paths, migration contracts, failure injection,
 privacy gates and independent acceptance tests. These are *design documents*,
 not claims that the production features have shipped.
+
+## ARCH-00B — Private product storage (experimental)
+
+The new `xwiki-knowledge` Python package contains a **separate**, private
+SQLite product store. It does not replace the existing `.state/ingest.sqlite`
+or the existing Voice Memos CLI. Run `pip install -e .` and inspect without
+writing new state:
+
+```bash
+python -m xwiki.infrastructure.sqlite.cli --import-legacy --dry-run
+python -m xwiki.infrastructure.sqlite.cli --import-legacy
+```
+
+The import reads the legacy `recordings` database without altering it, keeps
+all rows and versions in the new private DB, and flags incompatible historical
+hashes. Converted Source records remain **queued**, not verified or published.
+No model inference, approval or Git publishing is performed. See the
+[ARCH-00B migration and recovery guide](docs/architecture/adr-00b-product-sqlite.md).
