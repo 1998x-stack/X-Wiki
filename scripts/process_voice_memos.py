@@ -369,7 +369,12 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                         pi_bin=settings.pi_bin,
                         timeout_seconds=settings.compile_timeout_seconds,
                     )
-                except (subprocess.TimeoutExpired, subprocess.CalledProcessError) as error:
+                except (
+                    subprocess.TimeoutExpired,
+                    subprocess.CalledProcessError,
+                    RuntimeError,
+                    OSError,
+                ) as error:
                     # Compilation is a single wall-clock call; a Mac that falls
                     # asleep mid-run or a flaky pi invocation fails transiently.
                     # Keep sources raw_ready and retry on the next scan.
