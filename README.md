@@ -46,7 +46,8 @@ cp .env.example .env          # 可选；默认已经是中文转写
 # 质量检查与站点构建
 .venv/bin/ruff check .
 .venv/bin/pytest
-.venv/bin/python scripts/prepare_site.py
+.venv/bin/python scripts/wiki_lint.py --strict
+.venv/bin/python scripts/prepare_site.py --strict
 .venv/bin/mkdocs build --strict
 ```
 

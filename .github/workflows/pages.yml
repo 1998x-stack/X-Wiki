@@ -8,6 +8,8 @@ on:
       - "wiki/**"
       - "mkdocs.yml"
       - "scripts/prepare_site.py"
+      - "scripts/wiki_links.py"
+      - "scripts/wiki_lint.py"
       - "sites/assets/**"
       - "sites/content/**"
       - "sites/overrides/**"
@@ -33,7 +35,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r sites/requirements-site.txt
-      - run: python scripts/prepare_site.py
+      - run: python scripts/wiki_lint.py --strict
+      - run: python scripts/prepare_site.py --strict
       - run: mkdocs build --strict
       - uses: actions/upload-pages-artifact@v3
         with:
