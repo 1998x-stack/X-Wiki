@@ -21,6 +21,7 @@ jobs:
       - name: Test staged compilation and local release recovery
         run: |
           pytest -q scripts/tests/test_staged_compiler.py \
+            scripts/tests/test_compile_transaction.py \
             scripts/tests/test_release_gate.py \
             scripts/tests/test_verify_deployment.py \
             scripts/tests/test_mkdocs_nav.py
