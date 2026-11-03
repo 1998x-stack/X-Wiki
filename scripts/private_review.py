@@ -102,7 +102,11 @@ def _read_bundle(repo: Path, candidate_id: str, *, approved: bool = False) -> di
                 raise RuntimeError("invalid candidate file digest")
         if change["after"] is not None:
             blob = directory / "blobs" / change["after"]
-            if blob.is_symlink() or not blob.is_file() or _hash(blob.read_bytes()) != change["after"]:
+            if (
+                blob.is_symlink()
+                or not blob.is_file()
+                or _hash(blob.read_bytes()) != change["after"]
+            ):
                 raise RuntimeError("candidate blob missing or damaged")
     return manifest
 
@@ -179,14 +183,19 @@ def review_preview(repo: Path, candidate_id: str) -> tuple[str, str]:
     for change in manifest["changes"]:
         path = change["path"]
         current = verify_path(repo, path)
-        old = current.read_text(encoding="utf-8").splitlines(keepends=True) if current.exists() else []
+        old = (
+            current.read_text(encoding="utf-8").splitlines(keepends=True)
+            if current.exists() else []
+        )
         new = (
             (directory / "blobs" / change["after"]).read_text(encoding="utf-8").splitlines(
                 keepends=True
             )
             if change["after"] else []
         )
-        parts.extend(difflib.unified_diff(old, new, fromfile="before/" + path, tofile="after/" + path))
+        parts.extend(
+            difflib.unified_diff(old, new, fromfile="before/" + path, tofile="after/" + path)
+        )
     public_sha = hashlib.sha256(
         _canonical({"action": "public-promotion", "candidate": candidate_id})
     ).hexdigest()

@@ -12,7 +12,6 @@ import subprocess
 from pathlib import Path
 
 import compile_wiki
-import private_review
 import pytest
 from private_review import approve_private, promote_public, review_preview
 
