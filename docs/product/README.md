@@ -11,6 +11,8 @@
 
 ## 当前工程演进
 
+- [UX-002A 真实文件可靠导入](stages/UX-002A-Implementation.md)：独立私有 Blob Store、验证后保存、重复导入幂等、错误回滚。尚无 Mac 桌面 UI。
+
 - [ARCH-00C 私有与公开执行边界](../architecture/adr-00c-private-public-boundary.md)：私有候选、人工文件审批、公开提升分离；仅代码级阶段，无真实用户身份授权。
 
 - [ARCH-00B SQLite 持久化与旧库只读迁移](stages/ARCH-00B-Implementation.md)：新产品数据库与已有 Voice Memos 处理记录隔离；尚未完成私有发布授权。

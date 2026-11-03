@@ -143,3 +143,24 @@ For the full local candidate preview / separate approvals, see
 [Private/Public Boundary](docs/architecture/adr-00c-private-public-boundary.md).
 This phase implements an operator-confirmed, file-level bridge, **not** the
 future evidence-grounded user approval and identity system in UX-003.
+
+## UX-002A — Reliable local import (initial implementation)
+
+Install the Python package with `pip install -e .`. Without accounts, Git,
+Whisper or an LLM, import a user-chosen TXT/MD/M4A/MP3/WAV file:
+
+```bash
+xwiki-import import /path/to/a-real-note.md
+xwiki-import verify <source_id_printed_by_import>
+xwiki-import export <source_id_printed_by_import> /path/to/new-export.md
+```
+
+Commands write exact original bytes to `.state/source-store/sha256/` before
+recording `status=stored` in `.state/product.sqlite`. Repeated identical
+content is idempotent, independent of its original filename. A CLI response
+never includes the private original filesystem path or source text. Imported
+audio is **stored, not yet transcribed**; review and knowledge rewriting are
+out of scope. The existing Voice Memos CLI is not modified here. This remains
+an initial CLI, not yet a macOS application with drag-and-drop onboarding.
+
+See [UX-002A verification and recovery](docs/product/stages/UX-002A-Implementation.md).
