@@ -215,7 +215,7 @@ def test_crashed_uncommitted_attempt_recovers_using_existing_private_bytes(local
 
 
 def test_lease_expiry_or_write_failure_never_reports_false_completed(local, monkeypatch) -> None:
-    database, sources, transcripts, _, service, source, _ = local
+    database, sources, _, _, service, source, _ = local
     pending = service.enqueue(source.source_id)
     original_complete = JobRepository.complete
 
