@@ -8,6 +8,7 @@ import sqlite3
 from pathlib import Path
 
 import pytest
+
 from xwiki.domain.enums import SourceStatus
 from xwiki.infrastructure.sqlite.cli import main
 from xwiki.infrastructure.sqlite.database import open_product_db

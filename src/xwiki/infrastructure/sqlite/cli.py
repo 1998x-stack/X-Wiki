@@ -7,8 +7,8 @@ from __future__ import annotations
 
 import argparse
 import json
-from contextlib import closing
 import re
+from contextlib import closing
 from pathlib import Path
 
 from .database import SCHEMA_VERSION, open_product_db

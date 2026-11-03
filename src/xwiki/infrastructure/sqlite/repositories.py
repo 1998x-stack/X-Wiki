@@ -162,7 +162,10 @@ class ProductRepository:
                 self.connection.executemany(
                     "INSERT INTO claim_evidence (claim_id, span_id, polarity, ordinal) "
                     "VALUES (?, ?, ?, ?)",
-                    [(claim.claim_id, span_id, polarity, order) for order, span_id in enumerate(ids)],
+                    [
+                        (claim.claim_id, span_id, polarity, order)
+                        for order, span_id in enumerate(ids)
+                    ],
                 )
             self.connection.execute("RELEASE SAVEPOINT save_claim")
         except Exception:

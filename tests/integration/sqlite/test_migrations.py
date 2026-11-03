@@ -9,6 +9,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import pytest
+
 from xwiki.infrastructure.sqlite import database
 from xwiki.infrastructure.sqlite.database import MigrationError, open_product_db
 
@@ -85,7 +86,9 @@ def test_rejects_symlinked_database_and_parent(tmp_path: Path) -> None:
         open_product_db(parent_link / "product.sqlite")
 
 
-def test_schema_checksum_drift_fails_closed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_schema_checksum_drift_fails_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     target = _db(tmp_path)
     with open_product_db(target):
         pass
@@ -117,7 +120,10 @@ def test_failed_migration_rolls_back_all_its_ddl(
     path = _db(tmp_path)
     originals = database._scripts()
     first = originals[0]
-    interrupted = "CREATE TABLE temporary_test(id INTEGER);\nCREATE TABLE temporary_test(id INTEGER);\n"
+    interrupted = (
+        "CREATE TABLE temporary_test(id INTEGER);\n"
+        "CREATE TABLE temporary_test(id INTEGER);\n"
+    )
     broken = replace(first, content=interrupted, sha256=hashlib.sha256(
         interrupted.encode("utf-8")
     ).hexdigest())
