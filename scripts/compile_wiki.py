@@ -1,73 +1,21 @@
 #!/usr/bin/env python3
-"""Invoke pi with the repository skill to compile raw sources into X-Wiki."""
+"""Compile raw evidence through pi in a disposable staging workspace."""
 
 from __future__ import annotations
 
 import argparse
-import hashlib
-import os
 import subprocess
+import tempfile
 from pathlib import Path
 
+from staged_workspace import (
+    apply_staged_changes,
+    reject_symlinks,
+    repository_digest,
+    stage_source_tree,
+    validate_model_changes,
+)
 from xwiki_config import Settings
-
-ALLOWED_OUTPUTS = {"index.md", "log.md"}
-
-
-def tree_digest(root: Path) -> dict[Path, str]:
-    if not root.exists():
-        return {}
-    return {
-        path.relative_to(root): hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in root.rglob("*")
-        if path.is_file()
-    }
-
-
-IGNORED_SNAPSHOT_PARTS = {
-    ".git",
-    ".site-docs",
-    ".state",
-    ".venv",
-    "site",
-    ".codegraph",
-    ".pytest_cache",
-    ".ruff_cache",
-    ".omo",
-    ".workbuddy-ai",
-    "__pycache__",
-    ".env",
-    ".DS_Store",
-}
-
-
-def repository_digest(repo: Path) -> dict[str, str]:
-    digest: dict[str, str] = {}
-    for root, directories, files in os.walk(repo):
-        directories[:] = [name for name in directories if name not in IGNORED_SNAPSHOT_PARTS]
-        root_path = Path(root)
-        for name in files:
-            if name in IGNORED_SNAPSHOT_PARTS:
-                continue
-            path = root_path / name
-            relative = path.relative_to(repo).as_posix()
-            digest[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return digest
-
-
-def validate_model_changes(before: dict[str, str], after: dict[str, str]) -> None:
-    changed_by_model = {
-        path for path in before.keys() | after.keys() if before.get(path) != after.get(path)
-    }
-    invalid = sorted(
-        path
-        for path in changed_by_model
-        if path not in ALLOWED_OUTPUTS and not path.startswith("wiki/")
-    )
-    if invalid:
-        raise RuntimeError(
-            f"wiki compiler changed files outside its boundary: {', '.join(invalid)}"
-        )
 
 
 def compile_wiki(
@@ -79,6 +27,12 @@ def compile_wiki(
     pi_bin: str,
     timeout_seconds: int,
 ) -> None:
+    """Compile into staging and apply only a fully validated candidate.
+
+    This is a *staged-write/rollback* boundary, not an OS-level sandbox:
+    external pi tools may still have access to files outside the workspace.
+    """
+    repo = repo.expanduser().resolve()
     skill = repo / "scripts" / "skills" / "x-wiki-compiler"
     if not skill.is_dir():
         raise FileNotFoundError(f"X-Wiki skill not found: {skill}")
@@ -86,36 +40,70 @@ def compile_wiki(
     if pi_path.parent != Path(".") and not pi_path.exists():
         raise FileNotFoundError(f"pi executable not found: {pi_bin}")
 
-    source_list = "\n".join(f"- {path.relative_to(repo)}" for path in sources)
+    raw_root = (repo / "raw").resolve()
+    relative_sources: list[Path] = []
+    for source in sources:
+        absolute = (source if source.is_absolute() else repo / source).resolve()
+        try:
+            absolute.relative_to(raw_root)
+        except ValueError as error:
+            raise ValueError(f"source is outside raw/: {source}") from error
+        if not absolute.is_file():
+            raise FileNotFoundError(f"raw source not found: {source}")
+        relative_sources.append(absolute.relative_to(repo))
+
+    source_list = "\n".join(f"- {path.as_posix()}" for path in relative_sources)
     prompt = f"""Use the loaded x-wiki-compiler skill to compile these newly ingested sources:
 
 {source_list}
 
+You are in a temporary staging workspace, not the real repository.
 Read the existing wiki before editing. Update only wiki/, index.md, and log.md.
+Use paths relative to this workspace only. Do not access external filesystem paths.
 Do not edit raw/, run git, install software, or access network services.
 Perform the edits now, validate every new link, then give a concise summary.
 """
-    raw_before = tree_digest(repo / "raw")
-    repository_before = repository_digest(repo)
-    command = [
-        pi_bin,
-        "--provider",
-        provider,
-        "--model",
-        model,
-        "--skill",
-        str(skill),
-        "--no-session",
-        "--approve",
-        "--tools",
-        "read,write,edit,grep,find,ls",
-        "--print",
-        prompt,
-    ]
-    subprocess.run(command, cwd=repo, check=True, timeout=timeout_seconds)
-    if tree_digest(repo / "raw") != raw_before:
-        raise RuntimeError("wiki compiler modified immutable raw evidence")
-    validate_model_changes(repository_before, repository_digest(repo))
+
+    # Capture ALL live repository files before model execution. A third-party
+    # agent that changes the live tree (or a concurrent human edit) aborts apply.
+    live_before = repository_digest(repo)
+    with tempfile.TemporaryDirectory(prefix="xwiki-compile-") as directory:
+        staged = Path(directory) / "workspace"
+        staged.mkdir()
+        stage_source_tree(repo, staged)
+        before = repository_digest(staged)
+        staged_skill = staged / "scripts" / "skills" / "x-wiki-compiler"
+
+        command = [
+            pi_bin,
+            "--provider",
+            provider,
+            "--model",
+            model,
+            "--skill",
+            str(staged_skill),
+            "--no-session",
+            "--approve",
+            "--tools",
+            "read,write,edit,grep,find,ls",
+            "--print",
+            prompt,
+        ]
+        try:
+            subprocess.run(command, cwd=staged, check=True, timeout=timeout_seconds)
+        finally:
+            # This check also runs after TimeoutExpired or CalledProcessError;
+            # the staging tree is discarded in all failure cases.
+            if repository_digest(repo) != live_before:
+                raise RuntimeError(
+                    "Live repository changed during staged compilation; "
+                    "discarding candidate without overwriting live edits"
+                )
+
+        reject_symlinks(staged)
+        after = repository_digest(staged)
+        validate_model_changes(before, after)
+        apply_staged_changes(repo, staged, live_before, before, after)
 
 
 def main() -> int:
