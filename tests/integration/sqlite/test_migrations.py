@@ -25,7 +25,7 @@ def test_fresh_database_has_all_migrations_private_permissions_and_wal(tmp_path:
         assert conn.execute("PRAGMA foreign_keys").fetchone()[0] == 1
         assert [row["version"] for row in conn.execute(
             "SELECT version FROM schema_migrations ORDER BY version"
-        )] == [1, 2, 3]
+        )] == [1, 2, 3, 4]
         for table in (
             "sources", "legacy_recording_snapshots", "legacy_migration_issues",
             "transcript_revisions", "evidence_spans", "claims", "claim_evidence",
@@ -137,7 +137,7 @@ def test_failed_migration_rolls_back_all_its_ddl(
         ).fetchone()[0] == 0
     monkeypatch.setattr(database, "_scripts", lambda: originals)
     with open_product_db(path) as conn:
-        assert conn.execute("SELECT count(*) FROM schema_migrations").fetchone()[0] == 3
+        assert conn.execute("SELECT count(*) FROM schema_migrations").fetchone()[0] == 4
 
 
 def test_upgrade_from_version_one_preserves_old_data(tmp_path: Path) -> None:
@@ -163,7 +163,7 @@ def test_upgrade_from_version_one_preserves_old_data(tmp_path: Path) -> None:
         raw.execute("COMMIT")
     with open_product_db(path) as upgraded:
         assert upgraded.execute("SELECT count(*) FROM sources").fetchone()[0] == 1
-        assert upgraded.execute("SELECT count(*) FROM schema_migrations").fetchone()[0] == 3
+        assert upgraded.execute("SELECT count(*) FROM schema_migrations").fetchone()[0] == 4
         assert upgraded.execute("PRAGMA foreign_key_check").fetchall() == []
 
 

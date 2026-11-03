@@ -134,3 +134,14 @@ cutover after the actual SourceStore and Approval workflow exist.
 - Same legacy batch can be imported repeatedly and after an interrupted import
   without duplicate snapshots or silent information loss.
 - Legacy CLI is unchanged; full old and new tests remain green.
+
+
+## Addendum — UX-002B migration 0004 (2026-11-03)
+
+UX-002B extends the **new** `product.sqlite` with
+`0004_job_leases.sql` (model identity, lease token/deadline, retry-after,
+attempt budget, revision pointer and claim indices). The earlier three SQL
+migration contents and checksums remain unchanged. `SCHEMA_VERSION` becomes
+4 and wheel packaging tests require all four SQL files. This does **not**
+affect the legacy `ingest.sqlite` or the original publisher.
+See [UX-002B](../product/stages/UX-002B-Implementation.md).

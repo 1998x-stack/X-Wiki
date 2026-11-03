@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from importlib.resources import files
 from pathlib import Path
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 _MIGRATION_NAME = re.compile(r"^(\d{4})_[a-z][a-z0-9_]*\.sql$")
 
 

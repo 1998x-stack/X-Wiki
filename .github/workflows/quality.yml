@@ -32,7 +32,7 @@ jobs:
                   if name.startswith("xwiki/infrastructure/sqlite/migrations/")
                   and name.endswith(".sql")
               )
-          assert len(scripts) == 3, scripts
+          assert len(scripts) == 4, scripts
           PY
       - run: python -m xwiki.infrastructure.sqlite.cli --help
       - run: ruff check .

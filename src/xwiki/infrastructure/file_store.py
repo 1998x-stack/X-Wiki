@@ -208,6 +208,49 @@ class PrivateBlobStore:
         finally:
             os.close(fd)
 
+    def verified_path(self, sha256: str) -> Path:
+        """Local-only verified blob path, for trusted native adapter input."""
+        self.verify_blob(sha256)
+        return self._blob_path(sha256)
+
+    def is_audio(self, sha256: str) -> bool:
+        """Sniff stored bytes, not a user-supplied filename or extension."""
+        path = self.verified_path(sha256)
+        flags = os.O_RDONLY
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        with os.fdopen(os.open(path, flags), "rb") as reader:
+            header = reader.read(12)
+        return bool(
+            header[4:8] == b"ftyp"
+            or (header.startswith(b"RIFF") and header[8:12] == b"WAVE")
+            or header.startswith(b"ID3")
+            or (len(header) >= 2 and header[0] == 0xFF and header[1] & 0xE0 == 0xE0)
+        )
+
+    def put_text(self, content: str) -> BlobReceipt:
+        """Durably save derived UTF-8 transcript as a separate private blob."""
+        if not isinstance(content, str) or not content.strip():
+            raise BlobError("empty transcript cannot be saved")
+        encoded = content.encode("utf-8")
+        if len(encoded) > MAX_TEXT_BYTES:
+            raise BlobError("transcript exceeds safe text limit")
+        candidate: Path | None = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="wb", dir=self.temp, suffix=".txt", prefix=".transcript-",
+                delete=False,
+            ) as stream:
+                candidate = Path(stream.name)
+                os.chmod(candidate, 0o600)
+                stream.write(encoded)
+                stream.flush()
+                os.fsync(stream.fileno())
+            return self.put_file(candidate)
+        finally:
+            if candidate is not None:
+                candidate.unlink(missing_ok=True)
+
     def read_verified(self, sha256: str, *, max_bytes: int = MAX_TEXT_BYTES) -> bytes:
         size = self.verify_blob(sha256)
         if size > max_bytes:

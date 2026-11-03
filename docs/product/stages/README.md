@@ -114,3 +114,5 @@ ARCH-00A 是**当前正在实施的第一项任务**；该项仅包含：
 与之前拆分一致：ARCH-00C 尚未实施，不能把 ARCH-00B 的新表误认为私有化发布权限已经完成。
 
 - [ARCH-00C 私有候选与公开提升隔离](../../architecture/adr-00c-private-public-boundary.md)：legacy 保留兼容，review_first 禁止自动公开。
+
+- [UX-002B — Durable Processing Jobs](UX-002B-Implementation.md)：队列租约、失败恢复、模型版本幂等和真实私有转写输出，尚无桌面 UI。

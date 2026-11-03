@@ -1,6 +1,6 @@
 # UX-002｜First Real Value：真实导入、来源可靠性与首次使用
 
-> 设计状态：UX-002A 真实来源存储正在实施，UX-002B/002C/002D 尚未实现｜前置 [ARCH-00](./ARCH-00-Foundation.md)｜后续 [UX-003](./UX-003-Knowledge-Review.md)  
+> 工程状态：UX-002A 已合并；UX-002B 持久转写任务正在实施；UX-002C/002D 尚未实现｜前置 [ARCH-00](./ARCH-00-Foundation.md)｜后续 [UX-003](./UX-003-Knowledge-Review.md)  
 > 产品目标：用户不用理解 Python、SQLite、Git、Whisper、pi，能把**自己的一份真实来源**安全地导入产品、看见来源正文及真实处理状态。首个真实知识更新将在 UX-003 完成，本阶段不伪装其已交付。
 
 ## A. 研究假设、产品体验与排除项
@@ -197,3 +197,12 @@ apps/desktop-macos/
 - [UX-002A source import status, CLI usage and test cases](UX-002A-Implementation.md)
 - 第一批实现 `SourceStore` 与 `ImportSource`：真实文件哈希校验、私有持久化、SQLite `stored` 状态、同内容去重、可核验导出。
 - **尚未交付**拖拽式 Mac 安装包、真实转写队列、逐条证据审阅和权限 UI。文件状态 `stored` 仅表示原始字节已存储，不代表转写/索引或知识批准完成。
+
+
+## UX-002B 交付进展
+
+- [持久任务与本地 MLX Whisper 适配器说明](UX-002B-Implementation.md)
+- 0004 SQL lease 扩展在既有 jobs/job_attempts 表上渐进升级，无损保留 ARCH-00B 版本校验。
+- Worker 对真实私有 Blob 进行前后 SHA-256 核验；只承认已持久化的转写 Revision，失败可恢复且有最大尝试预算。
+- 不自动下载模型，不连接远程 LLM 或 Git；独立旧 Voice Memos 管线行为仍保留。
+- **未完成** IPC GUI、自动服务、Apple Silicon 真实模型推理/权限测试、来源语义审核和批准。
