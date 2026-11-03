@@ -12,6 +12,7 @@ dependencies = []
 
 [project.scripts]
 xwiki-state = "xwiki.infrastructure.sqlite.cli:main"
+xwiki-import = "xwiki.interfaces.import_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
