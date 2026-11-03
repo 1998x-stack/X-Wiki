@@ -6,21 +6,8 @@ repo_name: 1998x-stack/X-Wiki
 docs_dir: sites/.site-docs
 site_dir: sites/site
 copyright: 本地优先 · 原始语音证据不公开
-nav:
-  - 首页: index.md
-  - 综合:
-      - 语音到知识编译器: wiki/synthesis/voice-to-knowledge-compiler.md
-  - 概念:
-      - 自由与必然: wiki/concepts/freedom-and-necessity.md
-      - 每日操作系统: wiki/concepts/daily-operating-system.md
-      - 位置与主动权: wiki/concepts/positioning-and-agency.md
-  - 人物:
-      - 李斯: wiki/entities/li-si.md
-      - 荀子: wiki/entities/xunzi.md
-      - 韩非: wiki/entities/han-fei.md
-      - 吕不韦: wiki/entities/lu-buwei.md
-  - 决策:
-      - 本地优先语音管道: wiki/decisions/0001-local-first-voice-memo-pipeline.md
+hooks:
+  - scripts/mkdocs_nav.py
 theme:
   name: material
   language: zh

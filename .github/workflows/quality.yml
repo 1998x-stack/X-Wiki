@@ -26,3 +26,4 @@ jobs:
       - run: python scripts/release_gate.py > sites/.site-docs/release-manifest.json
       - run: mkdocs build --strict
       - run: test -s sites/site/release-manifest.json
+      - run: test -s sites/site/release-manifest.json

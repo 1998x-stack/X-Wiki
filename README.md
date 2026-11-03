@@ -54,3 +54,15 @@ python scripts/wiki_lint.py --strict
 
 知识入口见 [index.md](index.md)，公开页面见
 [1998x-stack.github.io/X-Wiki](https://1998x-stack.github.io/X-Wiki/)。
+
+## Verified website deployment
+
+After GitHub Pages deployment, the workflow reads back the public
+`release-manifest.json` over HTTPS and compares its full file manifest,
+commit SHA, and digest with the source commit. Only after a matching read-back
+is a deployment receipt uploaded as a workflow artifact. See
+`docs/architecture/deployment-verification.md`.
+
+Site navigation is generated from every published `wiki/` page by
+`scripts/mkdocs_nav.py`; newly compiled pages therefore cannot silently
+remain outside navigation.
