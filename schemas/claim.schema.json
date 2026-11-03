@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claim",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claim_id",
+    "text",
+    "owner",
+    "modality",
+    "confidence_bucket"
+  ],
+  "properties": {
+    "claim_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "owner": {
+      "type": "string",
+      "enum": [
+        "user",
+        "source",
+        "assistant_inference"
+      ]
+    },
+    "modality": {
+      "type": "string",
+      "enum": [
+        "assertion",
+        "hypothesis",
+        "question"
+      ]
+    },
+    "confidence_bucket": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ]
+    },
+    "supporting_span_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+      },
+      "uniqueItems": true
+    },
+    "opposing_span_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+      },
+      "uniqueItems": true
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "supporting_span_ids"
+      ],
+      "properties": {
+        "supporting_span_ids": {
+          "minItems": 1
+        }
+      }
+    },
+    {
+      "required": [
+        "opposing_span_ids"
+      ],
+      "properties": {
+        "opposing_span_ids": {
+          "minItems": 1
+        }
+      }
+    }
+  ]
+}

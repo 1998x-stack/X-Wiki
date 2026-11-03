@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ReviewAction",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action_id",
+    "proposal_id",
+    "reviewer_id",
+    "decision",
+    "reviewed_at",
+    "idempotency_key"
+  ],
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "proposal_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "reviewer_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "approve",
+        "reject",
+        "mark_uncertain"
+      ]
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    }
+  }
+}

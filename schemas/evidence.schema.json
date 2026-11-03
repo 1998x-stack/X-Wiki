@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceSpan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "span_id",
+    "source_id",
+    "source_revision_sha256",
+    "start_offset",
+    "end_offset",
+    "quote_sha256"
+  ],
+  "properties": {
+    "span_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "source_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "source_revision_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "start_offset": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "end_offset": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "quote_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "transcript_revision_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "start_ms": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "end_ms": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "$comment": "Cross-field end_offset > start_offset and UTF-8 byte boundary verification occurs in the domain EvidenceSpan validator."
+}

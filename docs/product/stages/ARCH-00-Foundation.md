@@ -1,6 +1,6 @@
 # ARCH-00｜基线重构、统一领域模型与安全迁移
 
-> 阶段性质：**设计方案，尚未实施**。当前 GitHub main：2026-11-03 验证的 X-Wiki Python 脚本与 MkDocs 系统。  
+> 阶段性质：**实施中**；ARCH-00A Domain Contracts & Packaging 已提交代码，仍需 CI 验收；ARCH-00B/00C 未实施。当前 GitHub main：2026-11-03 验证的 X-Wiki Python 脚本与 MkDocs 系统。  
 > 上游：[PRD v2](../PRD-v2.md) · [需求研究](../research/PH-HN-2026.md)  
 > 下游：[UX-002](./UX-002-First-Real-Value.md) · [UX-003](./UX-003-Knowledge-Review.md)
 
@@ -195,3 +195,11 @@ CREATE TABLE review_actions(
 | ARCH-00C — Compatibility & Privacy boundary | `scripts/xwiki_config.py`, `process_voice_memos.py`, `compile_wiki.py`, `.gitignore`, `docs/architecture/adr-00-private-public-boundary.md` | 旧模式未退化，新模式不默认公开 |
 
 **DoD**：用真实代码测试证明“新私有工作区不经过用户授权产生公开 Git 更改”；既有 GitHub Pages、release manifest、Mac smoke、PR #7 demo 仍绿。ARCH-00 不应假装 P0 的真实导入或真实审阅已经实现。
+
+## ARCH-00A — 本阶段交付记录（2026-11-03）
+
+- 实施范围：Python 可安装的 `src/xwiki/` 纯领域模块、八份 Draft 2020-12 JSON Schemas、严格序列化与负例测试、Linux/macOS CI 集成。
+- 安全约束：`Source` 与 `KnowledgeNode` 默认只能表示 private；显式外部模型 consent 才允许领域层通过外发判定；`public_web` 仍拒绝，等待 ARCH-00C 的独立发布授权。
+- 明确限制：这里的 Policy 是无 I/O 的业务判定，**尚未连接真实模型调用或 Git 发布拦截**；现有 CLI 行为不变，不能把 ARCH-00A 解释为完成真实私有化改造。
+- 验收依据：新旧 pytest、JSON Schema 反例、Ruff、静态站点和浏览器 E2E；CI 结果以 GitHub Actions 为准。
+- 下一项：ARCH-00B SQLite Schema + 无损迁移，再进入 ARCH-00C 发布权限边界。

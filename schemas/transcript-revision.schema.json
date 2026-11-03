@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TranscriptRevision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "revision_id",
+    "source_id",
+    "text_sha256",
+    "engine",
+    "model",
+    "created_at"
+  ],
+  "properties": {
+    "revision_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "source_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$"
+    },
+    "text_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "engine": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(?:Z|[+-][0-9]{2}:[0-9]{2})$"
+    }
+  }
+}
