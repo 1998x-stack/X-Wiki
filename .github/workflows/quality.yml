@@ -19,3 +19,4 @@ jobs:
       - run: pip install pytest==8.4.2 ruff==0.13.2
       - run: ruff check .
       - run: pytest
+      - run: python scripts/wiki_lint.py --strict
