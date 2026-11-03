@@ -12,6 +12,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
+from compile_transaction import apply_transaction
+
 ALLOWED_OUTPUTS = {"index.md", "log.md"}
 IGNORED_SNAPSHOT_PARTS = {
     ".git",
@@ -34,12 +36,17 @@ def repository_digest(repo: Path) -> dict[str, str]:
     """Hash repository files, excluding known generated or private state."""
     digest: dict[str, str] = {}
     for root, directories, files in os.walk(repo):
-        directories[:] = [name for name in directories if name not in IGNORED_SNAPSHOT_PARTS]
         root_path = Path(root)
+        directories[:] = [name for name in directories if name not in IGNORED_SNAPSHOT_PARTS]
+        for name in directories:
+            if (root_path / name).is_symlink():
+                raise RuntimeError(f"Unsafe symlink in repository snapshot: {root_path / name}")
         for name in files:
             if name in IGNORED_SNAPSHOT_PARTS:
                 continue
             path = root_path / name
+            if path.is_symlink():
+                raise RuntimeError(f"Unsafe symlink in repository snapshot: {path}")
             relative = path.relative_to(repo).as_posix()
             digest[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
     return digest
@@ -123,47 +130,18 @@ def apply_staged_changes(
     staged_before: dict[str, str],
     staged_after: dict[str, str],
 ) -> list[str]:
-    """Apply validated changes, rolling back earlier writes on failure.
-
-    Multi-file replacement is not globally atomic. Failure rollback is
-    best-effort; filesystem errors during rollback require manual recovery.
-    """
+    """Apply validated changes with an fsynced journal for crash recovery."""
     validate_model_changes(staged_before, staged_after)
     reject_symlinks(staged)
     if repository_digest(repo) != live_before:
         raise RuntimeError("Live repository changed before applying staged output")
 
     changes = changed_paths(staged_before, staged_after)
-    backups: dict[str, bytes | None] = {}
-    for relative in changes:
-        live = repo / relative
-        if live.is_symlink() or (live.exists() and not live.is_file()):
-            raise RuntimeError(f"unsafe live destination: {relative}")
-        backups[relative] = live.read_bytes() if live.is_file() else None
-
-    try:
-        for relative in changes:
-            candidate = staged / relative
-            live = repo / relative
-            if candidate.is_file():
-                atomic_replace_file(live, candidate.read_bytes())
-            else:
-                live.unlink(missing_ok=True)
-    except Exception:
-        rollback_errors: list[str] = []
-        for relative, payload in backups.items():
-            live = repo / relative
-            try:
-                if payload is None:
-                    live.unlink(missing_ok=True)
-                else:
-                    atomic_replace_file(live, payload)
-            except OSError as error:
-                rollback_errors.append(f"{relative}: {error}")
-        if rollback_errors:
-            raise RuntimeError(
-                "Compilation apply failed AND rollback was incomplete: "
-                + "; ".join(rollback_errors)
-            ) from None
-        raise
-    return changes
+    desired = {
+        relative: (staged / relative).read_bytes()
+        if (staged / relative).is_file() else None
+        for relative in changes
+    }
+    return apply_transaction(
+        repo, desired, write=atomic_replace_file, expected_snapshot=live_before
+    )

@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from compile_transaction import recover_transactions
 from staged_workspace import (
     apply_staged_changes,
     reject_symlinks,
@@ -66,6 +67,7 @@ Perform the edits now, validate every new link, then give a concise summary.
 
     # Capture ALL live repository files before model execution. A third-party
     # agent that changes the live tree (or a concurrent human edit) aborts apply.
+    recover_transactions(repo)
     live_before = repository_digest(repo)
     with tempfile.TemporaryDirectory(prefix="xwiki-compile-") as directory:
         staged = Path(directory) / "workspace"

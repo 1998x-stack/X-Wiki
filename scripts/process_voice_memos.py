@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from compile_transaction import recover_transactions
 from compile_wiki import compile_wiki
 from import_voice_memos import (
     atomic_write_text,
@@ -274,6 +275,14 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
     failures = 0
 
     with exclusive_lock(repo / ".state" / "ingest.lock"):
+        try:
+            recover_transactions(repo)
+        except (RuntimeError, OSError, ValueError) as error:
+            print(
+                f"Interrupted Wiki compilation could not be recovered: {error}",
+                file=sys.stderr,
+            )
+            return TEMPORARY_FAILURE
         connection = open_state(repo / ".state" / "ingest.sqlite")
         try:
             recordings = discover_recordings(recordings_dir)

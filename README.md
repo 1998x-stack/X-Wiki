@@ -66,3 +66,7 @@ is a deployment receipt uploaded as a workflow artifact. See
 Site navigation is generated from every published `wiki/` page by
 `scripts/mkdocs_nav.py`; newly compiled pages therefore cannot silently
 remain outside navigation.
+
+## Durable compilation recovery
+
+Writeback now creates a fsynced transaction journal in `.state/compile-transactions/` before changing any live Wiki files. Interrupted attempts are recovered on the next scan, and divergent manual edits are never silently overwritten. See `docs/architecture/durable-compile.md`.
