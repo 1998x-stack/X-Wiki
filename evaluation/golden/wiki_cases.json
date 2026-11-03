@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "description": "Synthetic, independently authored golden cases for deterministic Wiki quality checks; no private voice data.",
+  "cases": [
+    {
+      "id": "valid_legacy_page",
+      "files": {
+        "index.md": "# X Wiki\n\n[[wiki/concepts/idea]]\n",
+        "wiki/concepts/idea.md": "# Idea\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "raw/references/note.md": "# Citation\n"
+      },
+      "expected_codes": []
+    },
+    {
+      "id": "missing_public_target",
+      "files": {
+        "index.md": "# Index\n\n[[wiki/concepts/unknown]]\n",
+        "wiki/concepts/idea.md": "# Idea\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "raw/references/note.md": "# Citation\n"
+      },
+      "expected_codes": [
+        "BROKEN_LINK"
+      ]
+    },
+    {
+      "id": "unknown_private_reference",
+      "files": {
+        "index.md": "# Index\n",
+        "wiki/concepts/idea.md": "# Idea\n\n## 来源\n\n- [[raw/references/unavailable]]\n"
+      },
+      "expected_codes": [
+        "BROKEN_REFERENCE"
+      ]
+    },
+    {
+      "id": "missing_source_provenance",
+      "files": {
+        "index.md": "# Index\n",
+        "wiki/concepts/idea.md": "# Idea\n\n## 来源\n\nNo evidence yet.\n"
+      },
+      "expected_codes": [
+        "MISSING_PROVENANCE"
+      ]
+    },
+    {
+      "id": "secret_in_public_page",
+      "files": {
+        "index.md": "# Index\n\n-----BEGIN PRIVATE KEY-----\n",
+        "wiki/concepts/idea.md": "# Idea\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "raw/references/note.md": "# Citation\n"
+      },
+      "expected_codes": [
+        "PRIVATE_PRIVATE_KEY"
+      ]
+    },
+    {
+      "id": "directory_traversal",
+      "files": {
+        "index.md": "# Index\n\n[[../.env]]\n",
+        "wiki/concepts/idea.md": "# Idea\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "raw/references/note.md": "# Citation\n"
+      },
+      "expected_codes": [
+        "UNSAFE_LINK"
+      ]
+    },
+    {
+      "id": "duplicate_explicit_id",
+      "files": {
+        "index.md": "# Index\n",
+        "wiki/concepts/idea.md": "---\ntype: concept\ntitle: Idea\nid: same-id\n---\n# Idea\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "wiki/concepts/other.md": "---\ntype: concept\ntitle: Other\nid: same-id\n---\n# Other\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "raw/references/note.md": "# Citation\n"
+      },
+      "expected_codes": [
+        "DUPLICATE_ID"
+      ]
+    },
+    {
+      "id": "valid_numbered_decision",
+      "files": {
+        "index.md": "# Index\n",
+        "wiki/decisions/0001-demo.md": "# First Decision\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "raw/references/note.md": "# Citation\n"
+      },
+      "expected_codes": []
+    },
+    {
+      "id": "private_voice_not_on_ci",
+      "files": {
+        "index.md": "# Index\n",
+        "wiki/concepts/voice-note.md": "# Voice\n\n## 来源\n\n- [[raw/voice/2026/11/private-memo|Local Evidence]]\n"
+      },
+      "expected_codes": []
+    },
+    {
+      "id": "code_only_pseudo_wikilink",
+      "files": {
+        "index.md": "# Index\n\n```md\n[[wiki/missing]]\n```\n",
+        "wiki/concepts/idea.md": "# Idea\n\n## 来源\n\n- [[raw/references/note]]\n",
+        "raw/references/note.md": "# Citation\n"
+      },
+      "expected_codes": []
+    }
+  ]
+}
