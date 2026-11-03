@@ -19,7 +19,7 @@ checks before creating a publishable site. Both run with the standard library.
 - The site builder replaces private evidence wikilinks with non-clickable
   HTML containing only the safe label. Unsafe targets, traversal and
   dangling links fail in strict mode.
-- High-confidence secret and private-identifier patterns block publication.
+- High-confidence secret and private-identifier patterns block publication in public site inputs, `log.md`, and tracked `raw/references/`.
   These heuristics are intentionally not a proof of complete privacy.
 - Only known generated output directories can be cleared. Symlinked source
   content and unsafe deletion targets are rejected.
@@ -45,6 +45,4 @@ ruff check .
   human review, LLM-provider controls or scoped public-content approvals.
 - The frontmatter parser supports scalar metadata; complex YAML should be
   added only alongside an explicit schema migration.
-- Publication checks are pre-push only when run locally; GitHub Pages
-  blocking protects the site, not already-public Git history. The ingestion
-  push path should run this guard before committing public content (future).
+- `git_publish()` enforces the same source lint **before committing or pushing**\n  generated content. GitHub Pages additionally checks the content before deployment.\n  Existing public Git history is outside the scope of these guards.

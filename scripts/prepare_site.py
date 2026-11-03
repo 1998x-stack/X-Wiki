@@ -69,8 +69,6 @@ def prepare(repo: Path, output: Path, *, strict: bool = False) -> None:
         shutil.copytree(assets, output / "sites" / "assets")
     not_found = repo / "sites" / "content" / "404.md"
     if not_found.is_file():
-        pass
-    else:
         shutil.copy2(not_found, output / "404.md")
     for path in output.rglob("*.md"):
         converted = convert_links(

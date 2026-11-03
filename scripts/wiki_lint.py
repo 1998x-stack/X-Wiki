@@ -86,6 +86,9 @@ def lint_wiki(repo: Path) -> list[Finding]:
     if not paths:
         add("error", "EMPTY_WIKI", wiki, 0, "no knowledge pages found")
     public_pages = [repo / "index.md", *paths]
+    if (repo / "log.md").is_file():
+        public_pages.append(repo / "log.md")
+    public_pages.extend(sorted((repo / "raw" / "references").rglob("*.md")))
     public_pages.extend(sorted((repo / "sites" / "content").rglob("*.md")))
     public_pages.extend(sorted((repo / "sites" / "overrides").rglob("*.html")))
     ids: dict[str, Path] = {}

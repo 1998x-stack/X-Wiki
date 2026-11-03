@@ -24,6 +24,7 @@ from import_voice_memos import (
     sha256_file,
     write_raw,
 )
+from wiki_lint import lint_wiki
 from xwiki_config import Settings
 
 TEMPORARY_FAILURE = 75
@@ -234,6 +235,11 @@ def git_publish(repo: Path, remote: str, branch: str) -> PublishResult:
     )
     if remote_check.returncode != 0:
         raise RuntimeError(f"Git remote {remote!r} is not configured; cannot publish")
+
+    lint_errors = [item for item in lint_wiki(repo) if item.severity == "error"]
+    if lint_errors:
+        findings = ", ".join(f"{item.path}:{item.code}" for item in lint_errors[:5])
+        raise RuntimeError(f"Refusing to commit or push unsafe Wiki content: {findings}")
 
     subprocess.run(["git", "add", "wiki", "index.md", "log.md"], cwd=repo, check=True)
     knowledge_paths = ["wiki", "index.md", "log.md"]
