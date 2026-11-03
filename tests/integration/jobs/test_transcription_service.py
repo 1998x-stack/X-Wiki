@@ -8,6 +8,7 @@ from contextlib import closing
 from pathlib import Path
 
 import pytest
+
 from xwiki.application.import_source import ImportSource
 from xwiki.application.transcription_service import TranscriptionService
 from xwiki.domain.enums import SourceStatus
@@ -43,7 +44,7 @@ class FakeLocalModel:
             raise PlatformUnavailable("simulated unsupported native runtime")
         if self.runs <= self.failures:
             raise TranscriptionFailure("transient synthetic native error")
-        return "你好，新的想法。🙂\n"
+        return "你好,新的想法。🙂\n"
 
 
 @pytest.fixture
@@ -79,7 +80,7 @@ def test_real_audio_processing_persists_transcript_without_publishing(local) -> 
         rev = repo.get_transcript_revision(done.revision_id)
         assert rev is not None and rev.model == MODEL
         assert rev.source_id == source.source_id
-        assert transcripts.read_verified(rev.text_sha256).decode() == "你好，新的想法。🙂\n"
+        assert transcripts.read_verified(rev.text_sha256).decode() == "你好,新的想法。🙂\n"
         assert db.execute("SELECT COUNT(*) FROM transcript_revisions").fetchone()[0] == 1
         assert tuple(db.execute(
             "SELECT attempt_number,outcome FROM job_attempts"
@@ -89,7 +90,7 @@ def test_real_audio_processing_persists_transcript_without_publishing(local) -> 
 
 
 def test_completed_job_survives_reboot_and_does_not_run_again(local) -> None:
-    database, sources, transcripts, model, service, source, _ = local
+    database, sources, transcripts, _, service, source, _ = local
     service.enqueue(source.source_id)
     first = service.run_once()
     restarted = TranscriptionService(database, sources, transcripts, FakeLocalModel())
@@ -99,7 +100,7 @@ def test_completed_job_survives_reboot_and_does_not_run_again(local) -> None:
 
 
 def test_text_document_is_preserved_but_never_enqueued_for_asr(local, tmp_path: Path) -> None:
-    database, sources, transcripts, _, service, _source, _ = local
+    database, sources, _, _, service, _source, _ = local
     text = tmp_path / "my-note.md"
     text.write_text("# Notes\nThis is not audio.\n", encoding="utf-8")
     with closing(open_product_db(database)) as db:
@@ -144,7 +145,7 @@ def test_terminal_failure_never_deletes_original_and_requires_new_model(local) -
 
 
 def test_corrupt_original_prevents_transcription_and_keeps_job_truthful(local) -> None:
-    database, sources, transcripts, model, service, source, _ = local
+    database, sources, _, model, service, source, _ = local
     job = service.enqueue(source.source_id)
     sources._blob_path(source.content_sha256).write_bytes(b"corruption")
     result = service.run_once()
@@ -167,7 +168,7 @@ def test_cancelled_job_cannot_run_and_does_not_delete_source(local) -> None:
 
 
 def test_two_worker_instances_do_not_repeat_one_inflight_model_call(local) -> None:
-    database, sources, transcripts, _, service, source, _ = local
+    database, sources, transcripts, _, _, source, _ = local
     started = threading.Event()
     finished = threading.Event()
 
@@ -195,7 +196,7 @@ def test_two_worker_instances_do_not_repeat_one_inflight_model_call(local) -> No
 
 
 def test_crashed_uncommitted_attempt_recovers_using_existing_private_bytes(local) -> None:
-    database, sources, transcripts, _, service, source, _ = local
+    database, sources, _, _, service, source, _ = local
     pending = service.enqueue(source.source_id)
     with closing(open_product_db(database)) as db:
         jobs = JobRepository(db)
@@ -253,7 +254,7 @@ def test_cli_metadata_and_explicit_export_never_expose_transcript_implicitly(
     assert jobs_cli([*prefix, "export-transcript", completed.job_id, str(destination)]) == 0
     response = capsys.readouterr().out
     assert json.loads(response)["exported"]
-    assert destination.read_text() == "你好，新的想法。🙂\n"
+    assert destination.read_text() == "你好,新的想法。🙂\n"
     assert jobs_cli([*prefix, "export-transcript", completed.job_id, str(destination)]) == 2
     assert "INVALID_OPERATION" in capsys.readouterr().err
 
@@ -285,4 +286,6 @@ def test_same_source_can_be_queued_for_distinct_model_versions(local) -> None:
     assert other.run_once().status == "completed"
     with closing(open_product_db(db)) as connection:
         assert connection.execute("SELECT COUNT(*) FROM transcript_revisions").fetchone()[0] == 2
-        assert connection.execute("SELECT COUNT(*) FROM jobs WHERE status='completed'").fetchone()[0] == 2
+        assert connection.execute(
+            "SELECT COUNT(*) FROM jobs WHERE status=\'completed\'"
+        ).fetchone()[0] == 2

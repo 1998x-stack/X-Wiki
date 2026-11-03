@@ -53,7 +53,7 @@ class LocalMLXWhisper:
         if platform.system() != "Darwin" or platform.machine() != "arm64":
             raise PlatformUnavailable("local mlx-whisper requires Apple Silicon macOS")
         try:
-            import mlx_whisper  # noqa: PLC0415 - optional native dependency
+            import mlx_whisper  # optional native dependency; loaded on demand
         except ImportError as error:
             raise PlatformUnavailable("mlx_whisper is not installed") from error
         try:

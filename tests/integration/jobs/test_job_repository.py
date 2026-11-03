@@ -8,6 +8,7 @@ from contextlib import closing
 from pathlib import Path
 
 import pytest
+
 from xwiki.domain.enums import SourceOrigin, SourceStatus
 from xwiki.domain.source import Source, TranscriptRevision
 from xwiki.infrastructure.sqlite.database import ConflictError, open_product_db
