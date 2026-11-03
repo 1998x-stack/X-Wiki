@@ -84,7 +84,7 @@ def build_manifest(repo: Path) -> ReleaseManifest:
 
 
 def _journal_path(repo: Path, commit: str, remote: str, branch: str) -> Path:
-    key = hashlib.sha256(f"{remote}\0{branch}".encode("utf-8")).hexdigest()[:16]
+    key = hashlib.sha256(f"{remote}\0{branch}".encode()).hexdigest()[:16]
     return repo / ".state" / "releases" / f"{commit}-{key}.json"
 
 
