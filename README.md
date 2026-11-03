@@ -1,5 +1,7 @@
 # X-Wiki
 
+> [Product PRD / 产品需求文档](docs/product/PRD.md) · UX-001 — The First 90 Seconds
+
 X-Wiki 把 iPhone Voice Memos 持续转化为可追溯的 Markdown 知识库：
 
 ```text
