@@ -83,10 +83,7 @@ def resolve_link(link: WikiLink, current: Path, root: Path) -> ResolvedLink:
         if marker:
             raise ValueError(f"private evidence links cannot expose fragments: {target}")
         return ResolvedLink("private", root / (base + ".md"), "")
-    if base.startswith("wiki/"):
-        path = root / (base + ".md")
-    else:
-        path = current.parent / (base + ".md")
+    path = root / (base + ".md") if base.startswith("wiki/") else current.parent / (base + ".md")
     # No absolute/traversing input was accepted above; this also guards
     # against manually introduced symlinks that could point outside root.
     if not path.resolve().is_relative_to(root.resolve()):
@@ -104,7 +101,7 @@ def convert_links(
             output.append(part)
             continue
 
-        def replace(match: re.Match[str]) -> str:
+        def replace(match: re.Match[str], line: int = line) -> str:
             inner = match.group(1)
             target, separator, label = inner.partition("|")
             link = WikiLink(

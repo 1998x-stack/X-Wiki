@@ -111,9 +111,12 @@ def lint_wiki(repo: Path) -> list[Finding]:
                     resolved.path is None or not resolved.path.is_file()
                 ):
                     add("error", "BROKEN_LINK", file, link.line, link.target)
-                elif resolved.kind == "private" and link.target.startswith("raw/references/"):
-                    if resolved.path is None or not resolved.path.is_file():
-                        add("error", "BROKEN_REFERENCE", file, link.line, link.target)
+                elif (
+                    resolved.kind == "private"
+                    and link.target.startswith("raw/references/")
+                    and (resolved.path is None or not resolved.path.is_file())
+                ):
+                    add("error", "BROKEN_REFERENCE", file, link.line, link.target)
             except ValueError as error:
                 add("error", "UNSAFE_LINK", file, link.line, str(error))
 
