@@ -92,7 +92,7 @@ flowchart TD
 
 ## 六、阶段优先级与下一项具体 PR
 
-最值得开始的是 **ARCH-00A — Domain Contracts & Packaging**，仅包含：
+ARCH-00A 是**当前正在实施的第一项任务**；该项仅包含：
 
 1. `pyproject.toml`：改为 installable src package，并保留现有 Ruff/Pytest；
 2. `src/xwiki/domain/{source,evidence,knowledge,proposal,privacy,contracts,errors}.py`：纯数据契约与协议；
