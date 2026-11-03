@@ -70,6 +70,19 @@ def prepare(repo: Path, output: Path, *, strict: bool = False) -> None:
     not_found = repo / "sites" / "content" / "404.md"
     if not_found.is_file():
         shutil.copy2(not_found, output / "404.md")
+    # Copy only the allowlisted UX-001 static demo files; never mirror
+    # arbitrary site content (which might accidentally include raw evidence).
+    demo = repo / "sites" / "content" / "demo"
+    if demo.exists():
+        if not demo.is_dir():
+            raise ValueError("UX-001 demo source is not a directory")
+        destination = output / "demo"
+        destination.mkdir()
+        for name in ("index.html", "demo.css", "demo.js"):
+            source = demo / name
+            if not source.is_file() or source.is_symlink():
+                raise ValueError(f"UX-001 demo asset missing or unsafe: {name}")
+            shutil.copy2(source, destination / name)
     for path in output.rglob("*.md"):
         converted = convert_links(
             path.read_text(encoding="utf-8"), path, output, strict=strict
