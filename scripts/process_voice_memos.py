@@ -401,7 +401,10 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                     )
                     return TEMPORARY_FAILURE
                 if published is not None:
-                    print(f"Published {published.commit_sha} to {published.remote}/{published.branch}")
+                    print(
+                        f"Published {published.commit_sha} to "
+                        f"{published.remote}/{published.branch}"
+                    )
                 connection.execute(
                     """
                     update recordings

@@ -6,8 +6,8 @@ import sqlite3
 import subprocess
 from pathlib import Path
 
-import pytest
 import process_voice_memos
+import pytest
 from process_voice_memos import PublishResult, git_publish
 
 
@@ -93,7 +93,9 @@ def test_failed_publish_retains_pending_state(
         values (?, ?, ?, ?, ?, ?, ?)""",
         (
             "id", "hash", str(audio), str(raw),
-            process_voice_memos.transcription_fingerprint(settings.whisper_model, settings.language),
+            process_voice_memos.transcription_fingerprint(
+                settings.whisper_model, settings.language
+            ),
             "publish_pending", "2026-01-01T00:00:00Z",
         ),
     )
