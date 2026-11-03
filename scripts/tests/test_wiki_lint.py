@@ -167,3 +167,14 @@ def test_guard_allows_rebuild_of_marked_output(tmp_path: Path) -> None:
     (output / "stale.txt").write_text("old", encoding="utf-8")
     prepare(repo, output, strict=True)
     assert not (output / "stale.txt").exists()
+
+
+def test_adr_filename_can_start_with_numeric_sequence(tmp_path: Path) -> None:
+    repo = wiki_fixture(tmp_path)
+    decisions = repo / "wiki" / "decisions"
+    decisions.mkdir()
+    (decisions / "0001-choice.md").write_text(
+        "# Decision\n\n## 来源\n\n- [[raw/references/paper]]\n",
+        encoding="utf-8",
+    )
+    assert not errors(repo)

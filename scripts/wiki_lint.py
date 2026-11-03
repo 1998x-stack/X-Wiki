@@ -21,7 +21,7 @@ KNOWN_TYPES = {
 FRONTMATTER_LINE = re.compile(r"^([A-Za-z_][A-Za-z_0-9]*):\s*(.*?)\s*$")
 H1 = re.compile(r"^#\s+(.+)$", re.MULTILINE)
 SOURCES = re.compile(r"^##\s+来源\s*$", re.MULTILINE)
-IDENTIFIER = re.compile(r"^[a-z][a-z0-9_-]*$")
+IDENTIFIER = re.compile(r"^[a-z0-9][a-z0-9_-]*$")
 PRIVATE_PATTERNS = {
     "private-key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
     "token": re.compile(
