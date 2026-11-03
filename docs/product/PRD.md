@@ -1,5 +1,7 @@
 # X-Wiki 产品需求文档（PRD）
 
+> **版本说明**：本文件为 v1 的历史产品基线。请优先阅读 [基于 Product Hunt/Hacker News 评论的 PRD v2](PRD-v2.md)、[评论证据与需求映射](research/PH-HN-2026.md)、[Knowledge Review 工作台详细规格](specs/Knowledge-Review-Workbench.md)、[Product Hunt 发布计划](launch/Product-Hunt-Playbook.md)。v2 是尚待实现的设计，不代表这些功能已上线。
+
 > 版本：v1.0 · 状态：产品设计基线（非已上线功能声明）  
 > 更新：2026-11-03 · Owner：X-Wiki  
 > 面向：Product Hunt 国际早期用户、开发者、知识工作者、长期写作者  

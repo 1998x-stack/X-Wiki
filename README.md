@@ -1,6 +1,6 @@
 # X-Wiki
 
-> [Product PRD / 产品需求文档](docs/product/PRD.md) · [Try the interactive demo](https://1998x-stack.github.io/X-Wiki/demo/) · UX-001 — The First 90 Seconds
+> [Product PRD v2](docs/product/PRD-v2.md) · [PH/HN user research](docs/product/research/PH-HN-2026.md) · [Try the interactive demo](https://1998x-stack.github.io/X-Wiki/demo/)
 
 X-Wiki 把 iPhone Voice Memos 持续转化为可追溯的 Markdown 知识库：
 
@@ -84,3 +84,14 @@ makes no analytics requests. Approval affects only in-memory demo UI.
 Review the [UX-001 acceptance contract](docs/product/PRD.md) and the
 [browser E2E suite](tests/e2e/ux-001.spec.cjs) before using this demo as
 a Product Hunt acquisition entry point.
+
+## Product research & launch design (2026-11)
+
+The [product documentation hub](docs/product/README.md) includes an evidence-linked
+review of Product Hunt reviews and Hacker News discussions, the proposed
+[PRD v2](docs/product/PRD-v2.md), the
+[Knowledge Review Workbench specification](docs/product/specs/Knowledge-Review-Workbench.md),
+and the [Product Hunt launch playbook](docs/product/launch/Product-Hunt-Playbook.md).
+These are design proposals, not shipped features. Today's `/demo/` uses fictional
+in-memory data; a production evidence-review workspace requires new implementation
+and independent real-user validation.
