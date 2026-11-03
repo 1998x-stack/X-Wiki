@@ -11,8 +11,9 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from release_gate import ReleaseManifest, atomic_json, build_manifest
 
