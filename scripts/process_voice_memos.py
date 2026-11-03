@@ -273,6 +273,10 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
     transcript_dir.mkdir(parents=True, exist_ok=True)
     model_fingerprint = transcription_fingerprint(args.model, args.language)
     failures = 0
+    if settings.pipeline_mode == "legacy":
+        print("Legacy mode: compiled Wiki may be published via configured Git push.")
+    else:
+        print("Review-first mode: Git push disabled; model egress requires explicit consent.")
 
     with exclusive_lock(repo / ".state" / "ingest.lock"):
         try:
@@ -311,7 +315,10 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                     and row
                     and row[0] == audio_hash
                     and (row[1] == model_fingerprint or legacy_match)
-                    and row[2] in {"raw_ready", "compiled", "publish_pending"}
+                    and row[2] in {
+                        "raw_ready", "compiled", "publish_pending",
+                        "proposal_pending", "reviewed_no_change",
+                    }
                 ):
                     if legacy_match:
                         connection.execute(
@@ -372,15 +379,35 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                     )
                     return TEMPORARY_FAILURE
                 try:
-                    compile_wiki(
-                        repo,
-                        sources,
-                        args.llm_model,
-                        args.provider,
-                        pi_bin=settings.pi_bin,
-                        timeout_seconds=settings.compile_timeout_seconds,
-                    )
+                    if settings.pipeline_mode == "review_first":
+                        candidate = compile_wiki(
+                            repo,
+                            sources,
+                            args.llm_model,
+                            args.provider,
+                            pi_bin=settings.pi_bin,
+                            timeout_seconds=settings.compile_timeout_seconds,
+                            mode="review_first",
+                            external_processing_approved=settings.allow_model_egress,
+                        )
+                        next_status = "proposal_pending" if candidate else "reviewed_no_change"
+                        if candidate:
+                            print("PRIVATE_CANDIDATE=" + candidate)
+                    else:
+                        compile_wiki(
+                            repo,
+                            sources,
+                            args.llm_model,
+                            args.provider,
+                            pi_bin=settings.pi_bin,
+                            timeout_seconds=settings.compile_timeout_seconds,
+                        )
+                        next_status = (
+                            "publish_pending" if settings.git_push and not args.skip_push
+                            else "compiled"
+                        )
                 except (
+                    PermissionError,
                     subprocess.TimeoutExpired,
                     subprocess.CalledProcessError,
                     RuntimeError,
@@ -394,9 +421,6 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                         file=sys.stderr,
                     )
                     return TEMPORARY_FAILURE
-                next_status = (
-                    "publish_pending" if settings.git_push and not args.skip_push else "compiled"
-                )
                 connection.executemany(
                     """
                     update recordings
@@ -406,7 +430,12 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                     [(next_status, str(path)) for path in sources],
                 )
                 connection.commit()
-            if not args.skip_push and settings.git_push and has_publish_pending(connection):
+            if (
+                settings.pipeline_mode == "legacy"
+                and not args.skip_push
+                and settings.git_push
+                and has_publish_pending(connection)
+            ):
                 try:
                     published = git_publish(repo, settings.git_remote, settings.git_branch)
                 except (subprocess.CalledProcessError, OSError, RuntimeError) as error:

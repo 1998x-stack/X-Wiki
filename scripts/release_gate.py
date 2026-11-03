@@ -152,12 +152,19 @@ def remote_head(repo: Path, remote: str, branch: str) -> str | None:
     return exact[0]
 
 
-def publish_head(repo: Path, remote: str, branch: str) -> ReleaseManifest:
+def publish_head(
+    repo: Path, remote: str, branch: str, *, pipeline_mode: str = "legacy"
+) -> ReleaseManifest:
     """Journal before network I/O, verify the remote, then confirm success.
 
     If interrupted after a successful push, retry checks the remote and
     finalizes the same manifest without pushing a second content change.
     """
+    if pipeline_mode != "legacy":
+        raise PermissionError(
+            "review-first cannot push Git automatically; public promotion and operator "
+            "publication are separate explicit actions"
+        )
     if not remote or not branch:
         raise ValueError("remote and branch must be set")
     git(repo, "check-ref-format", "--branch", branch)

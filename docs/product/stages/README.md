@@ -112,3 +112,5 @@ ARCH-00A 是**当前正在实施的第一项任务**；该项仅包含：
 - [ADR-00B 数据隔离、旧库只读快照、事务回滚](../../architecture/adr-00b-product-sqlite.md)
 
 与之前拆分一致：ARCH-00C 尚未实施，不能把 ARCH-00B 的新表误认为私有化发布权限已经完成。
+
+- [ARCH-00C 私有候选与公开提升隔离](../../architecture/adr-00c-private-public-boundary.md)：legacy 保留兼容，review_first 禁止自动公开。

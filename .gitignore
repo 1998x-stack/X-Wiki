@@ -12,3 +12,8 @@ raw/voice/
 *.m4a
 *.wav
 *.mp3
+
+# Private review-first candidate/approval/public-export journals
+.state/
+*.sqlite-wal
+*.sqlite-shm

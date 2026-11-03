@@ -121,3 +121,25 @@ all rows and versions in the new private DB, and flags incompatible historical
 hashes. Converted Source records remain **queued**, not verified or published.
 No model inference, approval or Git publishing is performed. See the
 [ARCH-00B migration and recovery guide](docs/architecture/adr-00b-product-sqlite.md).
+
+## ARCH-00C — Review-first privacy gate (experimental)
+
+The existing CLI remains in `XWIKI_PIPELINE_MODE=legacy` by default for
+backward compatibility. In this legacy mode, the Wiki can still be changed and
+pushed automatically when `XWIKI_GIT_PUSH=true`. It is **not** private by
+default. To opt into the new, private candidate-first flow:
+
+```bash
+XWIKI_PIPELINE_MODE=review_first XWIKI_ALLOW_MODEL_EGRESS=false python scripts/process_voice_memos.py
+```
+
+With model egress disabled, the original source is still retained; `pi` is
+not invoked and the compile remains pending. When you explicitly allow your
+configured `pi` model provider, only a candidate is written to ignored
+`.state/review-candidates/` (the staging mechanism is **not** a network or OS
+sandbox). No public Wiki file or Git remote is changed by private approval.
+
+For the full local candidate preview / separate approvals, see
+[Private/Public Boundary](docs/architecture/adr-00c-private-public-boundary.md).
+This phase implements an operator-confirmed, file-level bridge, **not** the
+future evidence-grounded user approval and identity system in UX-003.

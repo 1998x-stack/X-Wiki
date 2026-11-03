@@ -1,6 +1,6 @@
 # ARCH-00｜基线重构、统一领域模型与安全迁移
 
-> 阶段性质：**实施中**；ARCH-00A 已合并主分支；ARCH-00B SQLite 持久化与无损迁移开发中；ARCH-00C 未实施。当前 GitHub main：2026-11-03 验证的 X-Wiki Python 脚本与 MkDocs 系统。  
+> 阶段性质：**实施中**；ARCH-00A 已合并主分支；ARCH-00B 已合并主分支；ARCH-00C 私有候选与公开分区实施中。当前 GitHub main：2026-11-03 验证的 X-Wiki Python 脚本与 MkDocs 系统。  
 > 上游：[PRD v2](../PRD-v2.md) · [需求研究](../research/PH-HN-2026.md)  
 > 下游：[UX-002](./UX-002-First-Real-Value.md) · [UX-003](./UX-003-Knowledge-Review.md)
 
@@ -211,3 +211,11 @@ CREATE TABLE review_actions(
 - 旧数据库导入为显式命令；历史 hash 不合法的行完整保留在私有快照并记录问题，绝不伪造已验证来源。
 - 本阶段没有消费者 UI、真实来源文件复制、模型外发权限执行器或公开发布审批。
 - 下一阶段 ARCH-00C 将建立真正的私有工作空间/公开站点边界。
+
+## ARCH-00C — Privacy compatibility boundary（交付范围）
+
+- 保留原 `XWIKI_PIPELINE_MODE=legacy` 的直接写 Wiki/Git 行为，兼容现有使用者；开启 `review_first` 后禁止自动 Git push。
+- 私有候选、原样 Diff 和文件级批准副本位于 `.state/`；此时**不触碰**公开 `wiki/`。
+- 公开提升为独立显式确认操作，且再次经过 staged Wiki Lint；提升只改本地公开工作树，不隐式 Git push。
+- 这不是 UX-003 的证据语义审核和授权用户身份；模型 `pi` 的真实沙箱/精细化外发数据约束仍未完成。
+- 详见 [ARCH-00C 边界 ADR](../../architecture/adr-00c-private-public-boundary.md)。

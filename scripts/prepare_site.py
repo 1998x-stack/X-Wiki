@@ -8,7 +8,7 @@ import shutil
 from pathlib import Path
 
 from wiki_links import convert_links
-from wiki_lint import lint_wiki
+from wiki_lint import lint_wiki, split_frontmatter
 
 GENERATED_MARKER = ".xwiki-generated"
 
@@ -57,6 +57,20 @@ def prepare(repo: Path, output: Path, *, strict: bool = False) -> None:
             )
             raise ValueError(f"Wiki lint rejected publishing: {examples}")
 
+    # A source deliberately marked private must never enter public site output.
+    public_inputs = [repo / "index.md", *(repo / "wiki").rglob("*.md")]
+    for candidate in public_inputs:
+        if candidate.is_file() and not candidate.is_symlink():
+            content = candidate.read_text(encoding="utf-8")
+            metadata, _, error = split_frontmatter(content)
+            if content.startswith("---\n") and error is not None:
+                raise ValueError("invalid publication frontmatter: " + error)
+            if metadata is not None and (
+                metadata.get("visibility", "").lower() == "private"
+                or metadata.get("privacy_scope", "").lower() == "private"
+                or metadata.get("published", "").lower() == "false"
+            ):
+                raise ValueError("private-marked page cannot be prepared for publication")
     for root in (repo / "wiki", repo / "sites" / "assets", repo / "sites" / "content"):
         reject_symlink_sources(root)
     if (repo / "index.md").is_symlink():
