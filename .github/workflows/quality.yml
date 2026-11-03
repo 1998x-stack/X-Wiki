@@ -19,6 +19,21 @@ jobs:
       - run: pip install pytest==8.4.2 ruff==0.13.2 jsonschema==4.25.1
       - run: pip install -e .
       - run: pip wheel --no-deps . --wheel-dir /tmp/xwiki-wheel
+      - name: Verify migration SQL files are bundled into the distributable wheel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          wheels = list(Path("/tmp/xwiki-wheel").glob("*.whl"))
+          assert len(wheels) == 1, wheels
+          with ZipFile(wheels[0]) as archive:
+              scripts = sorted(
+                  name for name in archive.namelist()
+                  if name.startswith("xwiki/infrastructure/sqlite/migrations/")
+                  and name.endswith(".sql")
+              )
+          assert len(scripts) == 3, scripts
+          PY
       - run: python -m xwiki.infrastructure.sqlite.cli --help
       - run: ruff check .
       - run: pytest
