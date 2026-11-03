@@ -8,6 +8,7 @@ import stat
 from pathlib import Path
 
 import pytest
+
 from xwiki.application.import_source import ImportSource
 from xwiki.domain.enums import SourceOrigin, SourceStatus
 from xwiki.infrastructure.file_store import BlobError, PrivateBlobStore

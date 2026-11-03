@@ -13,9 +13,9 @@ import hashlib
 import os
 import stat
 import tempfile
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Callable, Iterator
 
 from xwiki.domain.blob import BlobReceipt
 from xwiki.domain.errors import ContractError
