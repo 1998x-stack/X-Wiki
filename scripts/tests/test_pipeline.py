@@ -109,8 +109,12 @@ def test_repository_digest_ignores_cache_and_agent_dirs(tmp_path: Path) -> None:
     assert set(digest) == {"wiki/topic.md"}
 
 
-def test_transient_compile_timeout_returns_temp_failure(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+@pytest.mark.parametrize(
+    "failure",
+    [subprocess.TimeoutExpired("pi", timeout=900), RuntimeError("staged validation failed")],
+)
+def test_transient_compile_failure_returns_temp_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: Exception
 ) -> None:
     recordings_dir = tmp_path / "recordings"
     recordings_dir.mkdir()
@@ -135,10 +139,10 @@ def test_transient_compile_timeout_returns_temp_failure(
         process_voice_memos, "write_raw", lambda *a, **k: RawWriteResult(raw_path, True)
     )
 
-    def timeout_compile(*args, **kwargs) -> None:
-        raise subprocess.TimeoutExpired("pi", timeout=900)
+    def failing_compile(*args, **kwargs) -> None:
+        raise failure
 
-    monkeypatch.setattr(process_voice_memos, "compile_wiki", timeout_compile)
+    monkeypatch.setattr(process_voice_memos, "compile_wiki", failing_compile)
     monkeypatch.setenv("XWIKI_GIT_PUSH", "false")
 
     settings = process_voice_memos.Settings.load(tmp_path)

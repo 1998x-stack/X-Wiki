@@ -46,7 +46,9 @@ def repository_digest(repo: Path) -> dict[str, str]:
 
 
 def changed_paths(before: dict[str, str], after: dict[str, str]) -> list[str]:
-    return sorted(path for path in before.keys() | after.keys() if before.get(path) != after.get(path))
+    return sorted(
+        path for path in before.keys() | after.keys() if before.get(path) != after.get(path)
+    )
 
 
 def validate_model_changes(before: dict[str, str], after: dict[str, str]) -> None:
