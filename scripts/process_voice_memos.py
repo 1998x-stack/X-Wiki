@@ -13,6 +13,7 @@ import subprocess
 import sys
 import time
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +27,16 @@ from import_voice_memos import (
 from xwiki_config import Settings
 
 TEMPORARY_FAILURE = 75
+
+
+@dataclass(frozen=True)
+class PublishResult:
+    """Successful remote publication; a return value means push completed."""
+
+    commit_sha: str
+    remote: str
+    branch: str
+
 
 
 def json_default(value: Any) -> Any:
@@ -212,10 +223,9 @@ def knowledge_worktree_dirty(repo: Path) -> list[str]:
     return [line for line in result.stdout.splitlines() if line]
 
 
-def git_publish(repo: Path, remote: str, branch: str) -> None:
+def git_publish(repo: Path, remote: str, branch: str) -> PublishResult:
     if not (repo / ".git").is_dir():
-        print("Git repository is not initialized; skipping push.")
-        return
+        raise RuntimeError("Git repository is not initialized; cannot publish")
     remote_check = subprocess.run(
         ["git", "remote", "get-url", remote],
         cwd=repo,
@@ -223,8 +233,7 @@ def git_publish(repo: Path, remote: str, branch: str) -> None:
         text=True,
     )
     if remote_check.returncode != 0:
-        print(f"Git remote {remote!r} is not configured; skipping push.")
-        return
+        raise RuntimeError(f"Git remote {remote!r} is not configured; cannot publish")
 
     subprocess.run(["git", "add", "wiki", "index.md", "log.md"], cwd=repo, check=True)
     knowledge_paths = ["wiki", "index.md", "log.md"]
@@ -240,7 +249,13 @@ def git_publish(repo: Path, remote: str, branch: str) -> None:
         )
     elif staged.returncode != 0:
         raise subprocess.CalledProcessError(staged.returncode, staged.args)
-    subprocess.run(["git", "push", remote, f"HEAD:{branch}"], cwd=repo, check=True)
+    subprocess.run(["git", "push", remote, f"HEAD:refs/heads/{branch}"], cwd=repo, check=True)
+    commit_sha = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=repo, check=True, capture_output=True, text=True
+    ).stdout.strip()
+    if not commit_sha:
+        raise RuntimeError("Cannot resolve published commit SHA")
+    return PublishResult(commit_sha=commit_sha, remote=remote, branch=branch)
 
 
 def process(args: argparse.Namespace, settings: Settings) -> int:
@@ -377,14 +392,19 @@ def process(args: argparse.Namespace, settings: Settings) -> int:
                 connection.commit()
             if not args.skip_push and settings.git_push and has_publish_pending(connection):
                 try:
-                    git_publish(repo, settings.git_remote, settings.git_branch)
-                except (subprocess.CalledProcessError, OSError) as error:
+                    published = git_publish(repo, settings.git_remote, settings.git_branch)
+                except (subprocess.CalledProcessError, OSError, RuntimeError) as error:
                     # Keep publish_pending so the push is retried next scan.
                     print(
                         f"Publish failed transiently ({error}); publish_pending kept for retry.",
                         file=sys.stderr,
                     )
                     return TEMPORARY_FAILURE
+                if published is not None:
+                    print(
+                        f"Published {published.commit_sha} to "
+                        f"{published.remote}/{published.branch}"
+                    )
                 connection.execute(
                     """
                     update recordings
