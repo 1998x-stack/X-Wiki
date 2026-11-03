@@ -27,12 +27,20 @@ def compile_wiki(
     *,
     pi_bin: str,
     timeout_seconds: int,
-) -> None:
+    mode: str = "legacy_apply",
+    external_processing_approved: bool = False,
+) -> str | None:
     """Compile into staging and apply only a fully validated candidate.
 
     This is a *staged-write/rollback* boundary, not an OS-level sandbox:
     external pi tools may still have access to files outside the workspace.
     """
+    if mode not in {"legacy_apply", "review_first"}:
+        raise ValueError("unknown Wiki compilation mode")
+    if mode == "review_first" and not external_processing_approved:
+        raise PermissionError(
+            "review-first requires explicit permission before invoking the configured pi provider"
+        )
     repo = repo.expanduser().resolve()
     skill = repo / "scripts" / "skills" / "x-wiki-compiler"
     if not skill.is_dir():
@@ -105,7 +113,12 @@ Perform the edits now, validate every new link, then give a concise summary.
         reject_symlinks(staged)
         after = repository_digest(staged)
         validate_model_changes(before, after)
+        if mode == "review_first":
+            from private_review import capture_candidate
+
+            return capture_candidate(repo, staged, before, after, relative_sources)
         apply_staged_changes(repo, staged, live_before, before, after)
+        return None
 
 
 def main() -> int:
@@ -118,6 +131,8 @@ def main() -> int:
     parser.add_argument("--model", default=settings.llm_model)
     parser.add_argument("--pi-bin", default=settings.pi_bin)
     parser.add_argument("--timeout", type=int, default=settings.compile_timeout_seconds)
+    parser.add_argument("--proposal-only", action="store_true")
+    parser.add_argument("--allow-model-egress", action="store_true")
     args = parser.parse_args()
     repo = args.repo.expanduser().resolve()
     sources = [(path if path.is_absolute() else repo / path).resolve() for path in args.sources]
@@ -128,14 +143,18 @@ def main() -> int:
             parser.error(f"source is outside raw/: {source}")
         if not source.is_file():
             parser.error(f"source does not exist: {source}")
-    compile_wiki(
+    candidate = compile_wiki(
         repo,
         sources,
         args.model,
         args.provider,
         pi_bin=args.pi_bin,
         timeout_seconds=args.timeout,
+        mode="review_first" if args.proposal_only else "legacy_apply",
+        external_processing_approved=args.allow_model_egress,
     )
+    if args.proposal_only:
+        print("PRIVATE_CANDIDATE=" + (candidate or "NO_CHANGE"))
     return 0
 
 

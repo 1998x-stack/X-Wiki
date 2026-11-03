@@ -102,6 +102,13 @@ def lint_wiki(repo: Path) -> list[Finding]:
             add("error", "MISSING_FILE", file, 0, "public file is missing")
             continue
         text = file.read_text(encoding="utf-8")
+        metadata, _, _ = split_frontmatter(text)
+        if metadata is not None and (
+            metadata.get("visibility", "").lower() == "private"
+            or metadata.get("privacy_scope", "").lower() == "private"
+            or metadata.get("published", "").lower() == "false"
+        ):
+            add("error", "PRIVATE_PUBLICATION", file, 1, "private page in public tree")
         for code, pattern in PRIVATE_PATTERNS.items():
             for match in pattern.finditer(text):
                 line = text.count("\n", 0, match.start()) + 1

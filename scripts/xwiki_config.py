@@ -101,12 +101,17 @@ class Settings:
     git_push: bool
     git_remote: str
     git_branch: str
+    pipeline_mode: str = "legacy"
+    allow_model_egress: bool = False
 
     @classmethod
     def load(cls, repo: Path) -> Settings:
         repo = repo.expanduser().resolve()
         load_dotenv(repo / ".env")
         pi_bin = os.environ.get("XWIKI_PI_BIN") or default_pi_bin()
+        mode = os.environ.get("XWIKI_PIPELINE_MODE", "legacy").strip().lower()
+        if mode not in {"legacy", "review_first"}:
+            raise ValueError("XWIKI_PIPELINE_MODE must be legacy or review_first")
         return cls(
             repo=repo,
             recordings_dir=Path(
@@ -125,4 +130,6 @@ class Settings:
             git_push=env_bool("XWIKI_GIT_PUSH", True),
             git_remote=os.environ.get("XWIKI_GIT_REMOTE", "origin"),
             git_branch=os.environ.get("XWIKI_GIT_BRANCH", "main"),
+            pipeline_mode=mode,
+            allow_model_egress=env_bool("XWIKI_ALLOW_MODEL_EGRESS", False),
         )
