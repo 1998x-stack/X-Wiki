@@ -5,6 +5,7 @@ import json
 from dataclasses import FrozenInstanceError, fields
 
 import pytest
+
 from xwiki.domain.codec import from_payload, to_payload
 from xwiki.domain.enums import (
     ClaimModality,

@@ -114,7 +114,9 @@ class ChangeProposal:
         """Domain-only transition; not an authorization or evidence grounding check."""
         enum_value(target, ProposalStatus, "target")
         if target not in TRANSITIONS[self.status]:
-            raise TransitionError(f"invalid proposal transition: {self.status.value} → {target.value}")
+            raise TransitionError(
+                f"invalid proposal transition: {self.status.value} → {target.value}"
+            )
         if target is ProposalStatus.APPROVED:
             if self.candidate_kind in {ProposalKind.NO_CHANGE, ProposalKind.UNCERTAIN}:
                 raise TransitionError("no_change/uncertain cannot become approved revisions")

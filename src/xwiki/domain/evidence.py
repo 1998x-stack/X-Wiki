@@ -43,9 +43,12 @@ class EvidenceSpan:
             raise ContractError("evidence offsets must be a nonempty UTF-8 byte interval")
         optional_duration(self.start_ms, "start_ms")
         optional_duration(self.end_ms, "end_ms")
-        if self.start_ms is not None and self.end_ms is not None:
-            if self.end_ms <= self.start_ms:
-                raise ContractError("audio evidence must have positive duration")
+        if (
+            self.start_ms is not None
+            and self.end_ms is not None
+            and self.end_ms <= self.start_ms
+        ):
+            raise ContractError("audio evidence must have positive duration")
 
     def verify_text(self, source_text: str) -> str:
         """Verify content/version SHA, Unicode boundaries and exact quoted bytes.

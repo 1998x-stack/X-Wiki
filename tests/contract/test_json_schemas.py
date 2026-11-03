@@ -4,8 +4,9 @@ import json
 from dataclasses import fields
 from pathlib import Path
 
-import pytest
 from jsonschema import Draft202012Validator, FormatChecker
+import pytest
+
 from xwiki.domain.codec import to_payload
 from xwiki.domain.enums import (
     ClaimModality,
