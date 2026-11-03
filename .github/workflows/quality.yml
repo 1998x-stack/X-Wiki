@@ -23,4 +23,6 @@ jobs:
       - run: python scripts/wiki_lint.py --strict
       - run: pip install -r sites/requirements-site.txt
       - run: python scripts/prepare_site.py --strict
+      - run: python scripts/release_gate.py > sites/.site-docs/release-manifest.json
       - run: mkdocs build --strict
+      - run: test -s sites/site/release-manifest.json

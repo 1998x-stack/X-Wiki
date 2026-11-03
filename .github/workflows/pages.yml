@@ -55,6 +55,7 @@ jobs:
       - run: python scripts/prepare_site.py --strict
       - run: python scripts/release_gate.py > sites/.site-docs/release-manifest.json
       - run: mkdocs build --strict
+      - run: test -s sites/site/release-manifest.json
       - uses: actions/upload-pages-artifact@v3
         with:
           path: sites/site

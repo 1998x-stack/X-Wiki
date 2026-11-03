@@ -82,3 +82,9 @@ golden checks fail.
   before the journal is written leaves a commit on local HEAD. Retrying
   `git_publish()` recreates a journal for that HEAD.
 - File copy/sandbox and broader privacy policy improvements remain separate.
+
+### Private voice references
+
+An unaliased `[[raw/voice/...]]` renders as a neutral `本地证据` label,
+not the original recording filename or identifier. Explicit source aliases
+remain subject to public privacy review; they are not assumed safe.
