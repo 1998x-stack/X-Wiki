@@ -1,6 +1,6 @@
 # ARCH-00｜基线重构、统一领域模型与安全迁移
 
-> 阶段性质：**实施中**；ARCH-00A Domain Contracts & Packaging 已提交代码，仍需 CI 验收；ARCH-00B/00C 未实施。当前 GitHub main：2026-11-03 验证的 X-Wiki Python 脚本与 MkDocs 系统。  
+> 阶段性质：**实施中**；ARCH-00A 已合并主分支；ARCH-00B SQLite 持久化与无损迁移开发中；ARCH-00C 未实施。当前 GitHub main：2026-11-03 验证的 X-Wiki Python 脚本与 MkDocs 系统。  
 > 上游：[PRD v2](../PRD-v2.md) · [需求研究](../research/PH-HN-2026.md)  
 > 下游：[UX-002](./UX-002-First-Real-Value.md) · [UX-003](./UX-003-Knowledge-Review.md)
 
@@ -203,3 +203,11 @@ CREATE TABLE review_actions(
 - 明确限制：这里的 Policy 是无 I/O 的业务判定，**尚未连接真实模型调用或 Git 发布拦截**；现有 CLI 行为不变，不能把 ARCH-00A 解释为完成真实私有化改造。
 - 验收依据：新旧 pytest、JSON Schema 反例、Ruff、静态站点和浏览器 E2E；CI 结果以 GitHub Actions 为准。
 - 下一项：ARCH-00B SQLite Schema + 无损迁移，再进入 ARCH-00C 发布权限边界。
+
+## ARCH-00B — SQLite Product State（实施记录）
+
+- 新增版本化迁移、私有 Repository、旧 recordings 的只读、可重入、保留历史快照导入；具体见 [ARCH-00B 实施说明](ARCH-00B-Implementation.md) 和 [ADR-00B](../../architecture/adr-00b-product-sqlite.md)。
+- 新产品数据库为 `.state/product.sqlite`，**不修改**现有 `.state/ingest.sqlite` 或 `scripts/process_voice_memos.py` 的自动转写/发布行为。
+- 旧数据库导入为显式命令；历史 hash 不合法的行完整保留在私有快照并记录问题，绝不伪造已验证来源。
+- 本阶段没有消费者 UI、真实来源文件复制、模型外发权限执行器或公开发布审批。
+- 下一阶段 ARCH-00C 将建立真正的私有工作空间/公开站点边界。

@@ -27,4 +27,7 @@ jobs:
             scripts/tests/test_verify_deployment.py \
             scripts/tests/test_mkdocs_nav.py \
             tests/unit/domain/test_models.py \
-            tests/contract/test_json_schemas.py
+            tests/contract/test_json_schemas.py \
+            tests/integration/sqlite/test_migrations.py \
+            tests/integration/sqlite/test_legacy.py \
+            tests/integration/sqlite/test_repositories.py
