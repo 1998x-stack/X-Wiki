@@ -1,7 +1,7 @@
 # X-Wiki PRD v2.0 — Evidence-First Living Knowledge
 
 > 状态：**待实现的产品规格**（不是已上线功能） | 更新：2026-11-03  
-> 关联基线：[PRD v1](./PRD.md)、[UX-001 工程验收](./UX-001.md)、[PH/HN 用户研究](./research/PH-HN-2026.md)、[Review Workbench 详细规格](./specs/Knowledge-Review-Workbench.md)、[Product Hunt 发布计划](./launch/Product-Hunt-Playbook.md)
+> 关联基线：[PRD v1](./PRD.md)、[UX-001 工程验收](./UX-001.md)、[PH/HN 用户研究](./research/PH-HN-2026.md)、[Review Workbench 详细规格](./specs/Knowledge-Review-Workbench.md)、[Product Hunt 发布计划](./launch/Product-Hunt-Playbook.md)、[六阶段文件级实施设计](./stages/README.md)
 
 ## 1. Executive decision
 
@@ -19,7 +19,7 @@
 
 ## 2. 产品现实与真实交付边界
 
-截至 2026-11-03 可核对的仓库基线：\`iPhone Voice Memos → iCloud/Mac → MLX Whisper 本地转录 → immutable raw → pi+Skill 编译 → wiki/Markdown → Git → GitHub Pages\`；已有 staged-compiler、Wiki Lint、Git 发布清单、恢复日志、Pages HTTP 读回及 \`/demo/\` 合成六步交互。
+截至 2026-11-03 可核对的仓库基线：`iPhone Voice Memos → iCloud/Mac → MLX Whisper 本地转录 → immutable raw → pi+Skill 编译 → wiki/Markdown → Git → GitHub Pages`；已有 staged-compiler、Wiki Lint、Git 发布清单、恢复日志、Pages HTTP 读回及 `/demo/` 合成六步交互。
 
 **尚未交付**：无终端真实文件导入、桌面安装器、用户可审阅的真实 ChangeProposal、来源逐字位置级对齐、决策召回、真实授权隐私页面、多平台移动捕捉。不得让市场文案暗示这些现已存在。
 
@@ -59,16 +59,16 @@
 
 ### P0-A: Import & Capture (AC-01)
 
-- 从 Finder 拖入 \`.m4a/.mp3/.wav/.txt/.md\`（具体支持格式以端到端验收为准）；导入后先原文保存，再派生处理。
-- 每个 Source 至少记录 \`source_id\`, \`source_sha256\`, \`captured_at\`, \`imported_at\`, \`origin\`, \`processing_state\`。
-- \`processing_state\`: queued → importing → stored → transcribing → indexed/failed_retryable/failed_terminal；与下游修订状态分离。
+- 从 Finder 拖入 `.m4a/.mp3/.wav/.txt/.md`（具体支持格式以端到端验收为准）；导入后先原文保存，再派生处理。
+- 每个 Source 至少记录 `source_id`, `source_sha256`, `captured_at`, `imported_at`, `origin`, `processing_state`。
+- `processing_state`: queued → importing → stored → transcribing → indexed/failed_retryable/failed_terminal；与下游修订状态分离。
 - 重复导入相同 hash 应产生“已存在”提示而不是重复知识；文件丢失时展示缺失和恢复途径，不能显示虚假成功。
 - 允许始终读取/导出未经 AI 改写的原始内容。
 - **验收**：中断/磁盘满/转写异常注入后，至少没有已成功确认但不可找回的来源；重试幂等；来源 hash 可验证。
 
 ### P0-B: Evidence-linked Review Workbench (AC-02)
 
-- 新来源到达时输出 \`New Node | Enrich | Qualify | Contradict | No Change | Uncertain\` 之一，并说明为什么。
+- 新来源到达时输出 `New Node | Enrich | Qualify | Contradict | No Change | Uncertain` 之一，并说明为什么。
 - 提案不必全部进入用户队列；低于阈值的候选可归档为“无需更新”或“不确定”，不自动编造摘要。
 - 展示 before/after Diff、时间顺序、依据原句和页内跳转。
 - 原文片段缺失、来源不可读、版本过期、无法明确证明时阻止静默批准，并且允许编辑提案。
@@ -92,7 +92,7 @@
 
 ### P1-A: Decision Recall (AC-05)
 
-用户可问“我什么时候决定不采用方案 A？”而不必记得原句。先以确定性的检索定位 \`Decision/Claim/Revision\`，返回日期、当时支持与反对证据、变化历史；允许与关键词 FTS 比较。不给无证据的总括句。
+用户可问“我什么时候决定不采用方案 A？”而不必记得原句。先以确定性的检索定位 `Decision/Claim/Revision`，返回日期、当时支持与反对证据、变化历史；允许与关键词 FTS 比较。不给无证据的总括句。
 
 - 搜索界面默认 FAST：FTS5 + 别名/同义词；召回不足时提供可选语义扩展，不强迫用户等大模型。
 - 问答必须引用每个相关主张的 EvidenceSpan；若来源被删除/私有不可读，则降级或明确拒答。
@@ -100,7 +100,7 @@
 
 ### P1-B: Calm Rediscovery (AC-06)
 
-默认无主动通知；提供 \`Open when needed\` 知识再发现页。用户可选开启周回顾、项目相关提醒。每条“重新发现”应说明：与什么当前问题相关、为什么现在值得看、原文在哪里、如何永久关闭此类提醒。
+默认无主动通知；提供 `Open when needed` 知识再发现页。用户可选开启周回顾、项目相关提醒。每条“重新发现”应说明：与什么当前问题相关、为什么现在值得看、原文在哪里、如何永久关闭此类提醒。
 
 - **验收**：15 名用户用 7–14 天评估 relevance（有用/忽略/错误）、干扰、回访；“通知次数多”不是成功指标。
 

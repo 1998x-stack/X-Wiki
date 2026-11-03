@@ -1,6 +1,6 @@
 # X-Wiki
 
-> [Product PRD v2](docs/product/PRD-v2.md) · [PH/HN user research](docs/product/research/PH-HN-2026.md) · [Try the interactive demo](https://1998x-stack.github.io/X-Wiki/demo/)
+> [Product PRD v2](docs/product/PRD-v2.md) · [6-phase engineering roadmap](docs/product/stages/README.md) · [PH/HN user research](docs/product/research/PH-HN-2026.md) · [Try the interactive demo](https://1998x-stack.github.io/X-Wiki/demo/)
 
 X-Wiki 把 iPhone Voice Memos 持续转化为可追溯的 Markdown 知识库：
 
@@ -95,3 +95,11 @@ and the [Product Hunt launch playbook](docs/product/launch/Product-Hunt-Playbook
 These are design proposals, not shipped features. Today's `/demo/` uses fictional
 in-memory data; a production evidence-review workspace requires new implementation
 and independent real-user validation.
+
+## File-level product engineering roadmap
+
+The [six-stage implementation design](docs/product/stages/README.md) decomposes
+ARCH-00, UX-002/003/004/005 and REL-006 into 27 proposed reviewable PRs,
+including new and modified file paths, migration contracts, failure injection,
+privacy gates and independent acceptance tests. These are *design documents*,
+not claims that the production features have shipped.

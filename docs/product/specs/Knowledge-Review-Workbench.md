@@ -22,54 +22,54 @@ Workbench 不是“所有笔记一律给你一份 AI 改写”，不能自动将
 
 | 已有模块 | 已有能力 | 未来新增接口，不能误称已经实现 |
 |---|---|---|
-| \`scripts/import_voice_memos.py\` / \`process_voice_memos.py\` | 本地数据发现/转写/状态记录 | SourceStore API + 具体来源片段定位与补充元数据 |
-| \`scripts/compile_wiki.py\` | 暂存工作区中编译 Wiki | Proposal-only compile，不直接更新 approved 知识正文 |
-| \`scripts/staged_workspace.py\` / \`compile_transaction.py\` | 暂存、验证边界与崩溃恢复 | 审批后的原子写入、版本 CAS 和幂等确认 |
-| \`scripts/wiki_lint.py\` | 链接/schema/启发式隐私检查 | 结构化 Claim ↔ Evidence 的语义评测、引用范围审计 |
-| \`scripts/release_gate.py\` | Git 远端确认/manifest | 审批提交与公开发布状态分离 |
-| \`scripts/verify_deployment.py\` | GitHub Pages HTTPS 版本核验 | 私有知识不会因 Git 推送事件而默认变为公开 |
-| \`sites/content/demo/\` | 合成、手工编排的 6 步示范 | 未来真实 Workbench 不能复用“假的 AI 计算结果” |
+| `scripts/import_voice_memos.py` / `process_voice_memos.py` | 本地数据发现/转写/状态记录 | SourceStore API + 具体来源片段定位与补充元数据 |
+| `scripts/compile_wiki.py` | 暂存工作区中编译 Wiki | Proposal-only compile，不直接更新 approved 知识正文 |
+| `scripts/staged_workspace.py` / `compile_transaction.py` | 暂存、验证边界与崩溃恢复 | 审批后的原子写入、版本 CAS 和幂等确认 |
+| `scripts/wiki_lint.py` | 链接/schema/启发式隐私检查 | 结构化 Claim ↔ Evidence 的语义评测、引用范围审计 |
+| `scripts/release_gate.py` | Git 远端确认/manifest | 审批提交与公开发布状态分离 |
+| `scripts/verify_deployment.py` | GitHub Pages HTTPS 版本核验 | 私有知识不会因 Git 推送事件而默认变为公开 |
+| `sites/content/demo/` | 合成、手工编排的 6 步示范 | 未来真实 Workbench 不能复用“假的 AI 计算结果” |
 
 ## 3. 领域对象与数据契约
 
 **Source**（原始证据）：
 
-- \`id\`：不可复用 UUID；\`origin\`：\`voice_memo|file|markdown_vault|manual\`；
-- \`content_sha256\`：保存后内容哈希；\`created_at\`、\`captured_at\`、\`imported_at\`；
-- \`original_path_ref\`：只在本地可信索引保存，不放公开 Web；\`permission_scope\`：private；
-- \`state\`：queued/stored/transcribing/indexed/failed_retryable/failed_terminal；
-- \`language\`、\`transcript_revision_id\`、\`audio_duration_ms?\`；私有路径、文件名和 token 不应出现在遥测。
+- `id`：不可复用 UUID；`origin`：`voice_memo|file|markdown_vault|manual`；
+- `content_sha256`：保存后内容哈希；`created_at`、`captured_at`、`imported_at`；
+- `original_path_ref`：只在本地可信索引保存，不放公开 Web；`permission_scope`：private；
+- `state`：queued/stored/transcribing/indexed/failed_retryable/failed_terminal；
+- `language`、`transcript_revision_id`、`audio_duration_ms?`；私有路径、文件名和 token 不应出现在遥测。
 
 **EvidenceSpan**（精准引用）：
 
-- \`source_id\`、\`transcript_revision_id\`、\`start_offset\`、\`end_offset\`（Unicode codepoint 还是 UTF-8 byte 必须全局固定）；对语音可附带 \`start_ms\` / \`end_ms\`。
-- \`quote_sha256\` 与 \`source_revision_sha256\`，便于发现转写改动后引用失效。
+- `source_id`、`transcript_revision_id`、`start_offset`、`end_offset`（Unicode codepoint 还是 UTF-8 byte 必须全局固定）；对语音可附带 `start_ms` / `end_ms`。
+- `quote_sha256` 与 `source_revision_sha256`，便于发现转写改动后引用失效。
 - UI 必须支持展开原文、定位、显示来源日期、证据类别；低置信转写或来源丢失必须标明。
 
 **Claim**：
-- \`claim_id\`、\`text\`、\`owner\`（user/source/assistant inference）、\`modality\`（assertion/hypothesis/question）；
-- \`supporting_span_ids[]\`、\`opposing_span_ids[]\`；\`confidence_bucket\`（high/medium/low/unknown）。
+- `claim_id`、`text`、`owner`（user/source/assistant inference）、`modality`（assertion/hypothesis/question）；
+- `supporting_span_ids[]`、`opposing_span_ids[]`；`confidence_bucket`（high/medium/low/unknown）。
 - 不将 LLM 自己的改写伪造成 Source 的原句。
 
 **KnowledgeNode**：
-- \`node_id\`、\`kind\`（concept/decision/project/entity）、\`title\`、\`approved_revision_id\`、\`privacy_level=private\`；
-- \`status\`（active/archived）、\`source_claim_ids[]\`、\`topic_aliases[]\`。
+- `node_id`、`kind`（concept/decision/project/entity）、`title`、`approved_revision_id`、`privacy_level=private`；
+- `status`（active/archived）、`source_claim_ids[]`、`topic_aliases[]`。
 - 不需要存储绘图坐标；关系视图是可选派生展示。
 
 **ChangeProposal**：
-- \`proposal_id\`、\`node_id\`、\`base_revision_id\`、\`candidate_kind\`、\`before_text\`、\`after_text\`、\`rationale\`、\`evidence_span_ids[]\`、\`uncertainty_notes[]\`；
-- \`generator\` 包含 model/provider/version/prompt_digest；\`external_processing_approved\` 包含明确授权标识；
-- \`status\`：draft/proposed/needs_evidence/approved/rejected/superseded/failed；\`created_at\`、\`reviewed_at?\`、\`review_action_id?\`。
-- \`candidate_kind\` 必须枚举：new/enrich/qualify/contradict/no_change/uncertain。不能把 \`no_change\` 意外升格为修改知识。
+- `proposal_id`、`node_id`、`base_revision_id`、`candidate_kind`、`before_text`、`after_text`、`rationale`、`evidence_span_ids[]`、`uncertainty_notes[]`；
+- `generator` 包含 model/provider/version/prompt_digest；`external_processing_approved` 包含明确授权标识；
+- `status`：draft/proposed/needs_evidence/approved/rejected/superseded/failed；`created_at`、`reviewed_at?`、`review_action_id?`。
+- `candidate_kind` 必须枚举：new/enrich/qualify/contradict/no_change/uncertain。不能把 `no_change` 意外升格为修改知识。
 
 **KnowledgeRevision**：
-- \`revision_id\`、\`node_id\`、\`parent_revision_id\`、\`approved_from_proposal\`、\`content_sha256\`、\`committed_at\`、\`approved_by\`；
-- \`undo_of_revision?\`、\`git_commit_sha?\`、\`idempotency_key\`；
+- `revision_id`、`node_id`、`parent_revision_id`、`approved_from_proposal`、`content_sha256`、`committed_at`、`approved_by`；
+- `undo_of_revision?`、`git_commit_sha?`、`idempotency_key`；
 - 每次批准/撤销都应留下不可变审计记录，而不是删掉历史。
 
 ### 推荐 JSON 契约（示例数据为合成）
 
-\`\`\`json
+```json
 {
   "schema_version": 1,
   "proposal_id": "proposal-synthetic-001",
@@ -90,7 +90,7 @@ Workbench 不是“所有笔记一律给你一份 AI 改写”，不能自动将
     "prompt_digest": null
   }
 }
-\`\`\`
+```
 
 以上对象仅为 V2 契约草案；实现时需建立 JSON Schema/Pydantic 校验、字段迁移、正反例黄金数据集。
 
@@ -100,7 +100,7 @@ Workbench 不是“所有笔记一律给你一份 AI 改写”，不能自动将
 
 主界面草图：
 
-\`\`\`text
+```text
 Review Inbox                             Processing: Local / External consent
 ┌──────────────────────────────────────────────────────────────────────────┐
 │ New evidence may qualify “Daily systems”                 2 sources    │
@@ -116,7 +116,7 @@ Review Inbox                             Processing: Local / External consent
 │                                                                          │
 │ This affects PRIVATE KNOWLEDGE only. [Preview if shared publicly]       │
 └──────────────────────────────────────────────────────────────────────────┘
-\`\`\`
+```
 
 ### 用户操作与校验
 
@@ -131,18 +131,18 @@ Review Inbox                             Processing: Local / External consent
 | Ignore weak link | 用户认为无关 | 显示反馈已保存，不改知识 | 反馈不得成为私人文本泄露通道 |
 | Undo | 审计记录可取 | 创建新的 revert Revision，而非删除记录 | 当前版本已变化：重新评估并显示冲突 |
 
-**Evidence gate 不是机械地“点开过面板即可”**。当前 UX-001 合成演示仅能证明面板打开过；真实产品必须同时完成 EvidenceSpan 可定位、引用正确性与 version CAS，不能把 demo 的 \`evidenceViewed\` 直接当作生产授权。
+**Evidence gate 不是机械地“点开过面板即可”**。当前 UX-001 合成演示仅能证明面板打开过；真实产品必须同时完成 EvidenceSpan 可定位、引用正确性与 version CAS，不能把 demo 的 `evidenceViewed` 直接当作生产授权。
 
 ## 5. 推荐的 ChangeProposal 生成协议
 
 1. **Ingest**：源文件稳定落盘/哈希核对，重复记录归并；出错明确显示。
 2. **Candidate retrieval**：FTS5+alias 检索已存在节点，语义检索可选，返回候选与检索依据。
 3. **Evidence extraction**：从原始记录中定位候选主张；附偏移、时间、引用版本和置信度。
-4. **Reconciliation**：将新主张与节点已有 Claim 比较，分类 \`new/enrich/qualify/contradict/no_change/uncertain\`。
+4. **Reconciliation**：将新主张与节点已有 Claim 比较，分类 `new/enrich/qualify/contradict/no_change/uncertain`。
 5. **Grounding gate**：校验每个 proposed 断言是否被至少一个 SourceSpan 支持，识别数字、条件、主体、时间、否定与不同上下文。
 6. **Value filter**：无新意、弱相似、重复或无法可靠判断时可输出 no_change/uncertain，不强迫产生 Review 卡片。
 7. **Review**：用户批准、编辑、拒绝或保存未定。
-8. **Apply**：CAS 检查 \`approved_revision_id\`、幂等键、可恢复文件写回；不隐式触发公开 Pages。
+8. **Apply**：CAS 检查 `approved_revision_id`、幂等键、可恢复文件写回；不隐式触发公开 Pages。
 9. **Recall**：创建可索引的 Revision 记录，支持检索“何时改主意、为什么”。
 
 **重要**：LLM 不应直接拥有 Git push 权限。编译器产出候选，严格审阅后由确定性命令应用，再由独立发布授权决定是否分享。
@@ -165,7 +165,7 @@ Review Inbox                             Processing: Local / External consent
 - raw 中包含本地绝对路径/密钥/个人识别字段；
 - 只读模式、禁外发模式下的行为。
 
-指标按类别报告：\`EvidencePrecision\`、\`UnsupportedClaimRate\`、\`ProposalAcceptance\`、\`FalseContradictionRate\`、\`TimeToReview\`、\`UndoRate\`、\`NoChangeAccuracy\`。安全门槛：**错误引用/未经批准写入/未经授权外发/意外公开须为 0**。对每个异常保留可复现实例，不能只报 overall accuracy。
+指标按类别报告：`EvidencePrecision`、`UnsupportedClaimRate`、`ProposalAcceptance`、`FalseContradictionRate`、`TimeToReview`、`UndoRate`、`NoChangeAccuracy`。安全门槛：**错误引用/未经批准写入/未经授权外发/意外公开须为 0**。对每个异常保留可复现实例，不能只报 overall accuracy。
 
 ## 7. 安全与隐私分区
 

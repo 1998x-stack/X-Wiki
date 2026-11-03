@@ -16,6 +16,18 @@
 3. [Knowledge Review Workbench 详细规格](specs/Knowledge-Review-Workbench.md)：Source/EvidenceSpan/Claim/Proposal/Revision 契约、状态机、审批与回滚、证据评测、隐私边界、分阶段 PR。
 4. [Product Hunt / Hacker News 发布与用户增长计划](launch/Product-Hunt-Playbook.md)：正式发布前的 Go/No-go、定位文案、素材、用户研究、发布约束、漏斗和复盘。
 
+## 每阶段代码文件级工程设计
+
+- [六阶段总览与 27 个建议 PR](stages/README.md)
+- [ARCH-00 — 包架构、领域模型与迁移](stages/ARCH-00-Foundation.md)
+- [UX-002 — First Real Value：真实导入](stages/UX-002-First-Real-Value.md)
+- [UX-003 — Knowledge Review：证据与审批](stages/UX-003-Knowledge-Review.md)
+- [UX-004 — Decision Recall：检索与引用](stages/UX-004-Decision-Recall.md)
+- [UX-005 — Calm Rediscovery：低打扰重新发现](stages/UX-005-Calm-Rediscovery.md)
+- [REL-006 — 产品验收、Mac 发布与 Product Hunt](stages/REL-006-Product-Hunt-Release.md)
+
+每份文档均区分真实现状与待实现路径，并细化到 ADD/MODIFY 文件、函数职责、SQL、测试文件、失效路径、独立验收。
+
 ## 首选工程实施顺序
 
 **真实输入与可靠存储 → 用户可理解的数据流授权 → 独立证据与结构化 ChangeProposal → 人工审阅/批准/撤销 → 既有 Markdown 数据导入 → Decision Recall → 按需 Rediscovery。**
