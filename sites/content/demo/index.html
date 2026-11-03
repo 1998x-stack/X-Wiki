@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5ee">
+  <meta name="description" content="Try X-Wiki in 90 seconds. See how a new voice note can connect to an older idea, propose a revision, and preserve its evidence.">
+  <meta property="og:title" content="X-Wiki — Your notes become knowledge that evolves">
+  <meta property="og:description" content="Try an interactive, privacy-safe story of a thought evolving. No signup, no upload.">
+  <title>X-Wiki — Your notes become knowledge that evolves</title>
+  <link rel="stylesheet" href="./demo.css">
+  <script src="./demo.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#story">Skip to interactive demo</a>
+  <header class="topbar">
+    <a class="brand" href="../" aria-label="X-Wiki documentation home">
+      <span class="brand-symbol" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span>X–Wiki</span>
+    </a>
+    <nav aria-label="Main navigation" class="topnav">
+      <a href="#how-it-works">How it works</a>
+      <a href="https://github.com/1998x-stack/X-Wiki" rel="noopener noreferrer" target="_blank">GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+    <span class="nav-note"><span class="status-dot" aria-hidden="true"></span> INTERACTIVE PREVIEW</span>
+  </header>
+
+  <main>
+    <section class="hero section-width" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="spark" aria-hidden="true">✳</span> PRIVATE THINKING, CLEARER OVER TIME</div>
+        <h1 id="hero-title">Your ideas deserve <em>a second life.</em></h1>
+        <p class="hero-lead">Thoughts change. Notes usually don't. X-Wiki connects what you think today with what you believed before—then lets <strong>you</strong> decide what becomes knowledge.</p>
+        <div class="hero-actions">
+          <a id="start-demo" class="button button-primary" href="#story">Explore the 90-second demo <span aria-hidden="true">↗</span></a>
+          <span class="hero-hint">No signup. No uploads. Just a story.</span>
+        </div>
+        <div class="hero-meta">
+          <span><span class="tiny-tick" aria-hidden="true">✓</span> Evidence you can check</span>
+          <span><span class="tiny-tick" aria-hidden="true">✓</span> Changes you control</span>
+          <span><span class="tiny-tick" aria-hidden="true">✓</span> Your notes stay yours</span>
+        </div>
+      </div>
+      <div class="hero-graphic" aria-hidden="true">
+        <div class="graphic-head"><span>THE SHAPE OF A THOUGHT</span><span>01 → 02</span></div>
+        <div class="graphic-path">
+          <div class="graphic-line"></div>
+          <div class="graphic-node node-old"><span class="node-index">01 / AUG</span><strong>Structure creates focus.</strong><span class="node-dot"></span></div>
+          <div class="graphic-node node-new"><span class="node-index">02 / OCT</span><strong>But rigidity has a cost.</strong><span class="node-dot"></span></div>
+          <div class="graphic-node node-merged"><span class="node-index">NEW UNDERSTANDING</span><strong>Structure with flexibility.</strong><span class="node-dot"></span></div>
+        </div>
+        <div class="graphic-footer">Ideas aren't static. Your knowledge shouldn't be either. <span>↗</span></div>
+      </div>
+    </section>
+
+    <section id="story" class="demo-zone" aria-labelledby="demo-heading">
+      <div class="section-width">
+        <div class="demo-section-title">
+          <div>
+            <p class="eyebrow eyebrow-dark"><span aria-hidden="true">●</span> THE PRODUCT, IN A MINUTE</p>
+            <h2 id="demo-heading">Watch a thought evolve.</h2>
+          </div>
+          <div class="demo-label"><span class="demo-label-icon" aria-hidden="true">◉</span> Guided, fictional example <span class="demo-label-separator">/</span> No personal data</div>
+        </div>
+
+        <div id="demo-app" class="demo-shell" data-step="0" data-decision="pending" data-reviewed="false">
+          <div class="demo-topline">
+            <div class="step-counter"><span class="counter-mark" aria-hidden="true">✳</span> THE EVOLUTION <span id="step-fraction">01 <span class="counter-split">/</span> 06</span></div>
+            <button class="button-text" id="reset-demo" type="button">↺ <span>Start over</span></button>
+          </div>
+          <div class="progress-track" aria-hidden="true"><div id="progress-fill" class="progress-fill"></div></div>
+          <ol class="step-list" aria-label="Story steps">
+            <li data-progress-step="0" class="is-current" aria-current="step"><span>01</span> Old idea</li>
+            <li data-progress-step="1"><span>02</span> New note</li>
+            <li data-progress-step="2"><span>03</span> Connection</li>
+            <li data-progress-step="3"><span>04</span> Revision</li>
+            <li data-progress-step="4"><span>05</span> Evidence</li>
+            <li data-progress-step="5"><span>06</span> Your call</li>
+          </ol>
+
+          <div class="demo-body">
+            <section class="narrative-column" aria-label="Interactive story">
+              <div class="chapter">
+                <div class="scene" data-scene="0">
+                  <p class="scene-kicker">CHAPTER 01 <span class="kicker-rule"></span> THE STARTING POINT</p>
+                  <h3 tabindex="-1">Every idea starts somewhere.</h3>
+                  <p class="scene-description">Back in August, you recorded a thought on how to get more done. X-Wiki kept it as a living idea—not just a transcript.</p>
+                  <div class="note-card note-old">
+                    <div class="note-head"><span class="note-type"><span class="note-icon" aria-hidden="true">◎</span> VOICE NOTE</span><span>AUG 12, 2026</span></div>
+                    <blockquote>“A fixed daily schedule helps me focus. If I plan everything in advance, I waste less time deciding what to do.”</blockquote>
+                    <span class="note-foot">SYNTHETIC SOURCE 01 <span aria-hidden="true">↗</span></span>
+                  </div>
+                  <p class="scene-aside"><span aria-hidden="true">↳</span> One note. One belief. The beginning of a knowledge node.</p>
+                </div>
+
+                <div class="scene" data-scene="1" hidden>
+                  <p class="scene-kicker">CHAPTER 02 <span class="kicker-rule"></span> NEW EVIDENCE</p>
+                  <h3 tabindex="-1">But then you think differently.</h3>
+                  <p class="scene-description">Two months later, you record a new thought. It doesn't cancel the first idea—but it adds important nuance.</p>
+                  <div class="note-card note-new">
+                    <div class="note-head"><span class="note-type"><span class="note-icon" aria-hidden="true">◉</span> NEW VOICE NOTE</span><span>OCT 28, 2026</span></div>
+                    <blockquote>“I noticed that an overly rigid schedule makes me less adaptable. Keeping a few flexible hours actually helps.”</blockquote>
+                    <span class="note-foot">SYNTHETIC SOURCE 02 <span aria-hidden="true">↗</span></span>
+                  </div>
+                  <p class="scene-aside"><span aria-hidden="true">↳</span> Your new thought has something to say about your old one.</p>
+                </div>
+
+                <div class="scene" data-scene="2" hidden>
+                  <p class="scene-kicker">CHAPTER 03 <span class="kicker-rule"></span> THE CONNECTION</p>
+                  <h3 tabindex="-1">The connection isn't a coincidence.</h3>
+                  <p class="scene-description">Both notes are about the same problem: how to build a daily system that really works. The new note qualifies the old conclusion.</p>
+                  <div class="connection-card">
+                    <div class="connection-point"><span class="connection-dot old-dot"></span><div><small>AUGUST IDEA</small><strong>Structure reduces decision fatigue.</strong></div></div>
+                    <div class="connection-middle"><span class="connect-arrow" aria-hidden="true">↕</span><span>SHARED TOPIC: DAILY WORK SYSTEMS</span></div>
+                    <div class="connection-point"><span class="connection-dot new-dot"></span><div><small>OCTOBER EVIDENCE</small><strong>Rigidity can make adaptation harder.</strong></div></div>
+                    <div class="connection-reason"><strong>Why they connect</strong><p>Same personal goal, different constraint. The second note makes the earlier rule more precise.</p></div>
+                  </div>
+                </div>
+
+                <div class="scene" data-scene="3" hidden>
+                  <p class="scene-kicker">CHAPTER 04 <span class="kicker-rule"></span> A POSSIBLE REVISION</p>
+                  <h3 tabindex="-1">What if knowledge could grow?</h3>
+                  <p class="scene-description">Instead of adding an unrelated note, X-Wiki proposes an update to the existing knowledge node. <strong>Nothing is changed yet.</strong></p>
+                  <div class="diff-card">
+                    <div class="diff-side"><span class="diff-label">– BEFORE</span><p>A fixed schedule reduces daily decisions and increases focus.</p></div>
+                    <div class="diff-side diff-after"><span class="diff-label">+ PROPOSED</span><p>A structured day reduces decision fatigue, while leaving flexible time helps adapt to the unexpected.</p></div>
+                  </div>
+                  <p class="scene-aside"><span aria-hidden="true">↳</span> It's a suggestion, not an automatic overwrite.</p>
+                </div>
+
+                <div class="scene" data-scene="4" hidden>
+                  <p class="scene-kicker">CHAPTER 05 <span class="kicker-rule"></span> CHECK THE EVIDENCE</p>
+                  <h3 tabindex="-1">Don't trust the summary. Check the source.</h3>
+                  <p class="scene-description">Good knowledge has provenance. Open the original excerpts, compare the dates, and decide whether the suggested change is justified.</p>
+                  <div class="review-card">
+                    <span class="review-mark" aria-hidden="true">❝</span>
+                    <strong>Two notes. One suggested change.</strong>
+                    <p>Source text is available before you approve. You always have the final say.</p>
+                    <button id="review-sources" class="button button-dark" type="button" aria-controls="evidence-panel" aria-expanded="false">Inspect both sources <span aria-hidden="true">↗</span></button>
+                    <span id="reviewed-indicator" class="review-helper">Required before you can approve</span>
+                  </div>
+                </div>
+
+                <div class="scene" data-scene="5" hidden>
+                  <p class="scene-kicker">CHAPTER 06 <span class="kicker-rule"></span> YOU DECIDE</p>
+                  <h3 tabindex="-1">Your knowledge. Your call.</h3>
+                  <p class="scene-description">You control what becomes part of your knowledge. Accept the change, reject it, or undo your decision.</p>
+                  <div id="decision-actions" class="decision-actions">
+                    <button id="approve-revision" type="button" class="button button-primary">Approve revision <span aria-hidden="true">✓</span></button>
+                    <button id="reject-revision" type="button" class="button button-quiet">Keep the old idea</button>
+                    <button id="review-on-final" type="button" class="button-text evidence-inline" aria-controls="evidence-panel" aria-expanded="false">Reopen the source evidence ↗</button>
+                  </div>
+                  <div id="decision-outcome" class="outcome-card" hidden role="status">
+                    <span class="outcome-symbol" id="outcome-symbol" aria-hidden="true">✓</span>
+                    <div><strong id="outcome-title">Decision saved in this demo.</strong><p id="outcome-description">The knowledge node reflects your choice.</p></div>
+                  </div>
+                  <button id="undo-decision" class="button button-quiet undo-button" type="button" hidden>↶ Undo this decision</button>
+                  <p class="scene-aside">No account. No cloud upload. This demonstration resets on refresh.</p>
+                </div>
+              </div>
+              <footer class="story-footer">
+                <button id="previous-step" type="button" class="button button-quiet" disabled>← Back</button>
+                <div class="next-group">
+                  <span id="next-hint" class="next-hint"></span>
+                  <button id="next-step" type="button" class="button button-dark">Continue <span aria-hidden="true">→</span></button>
+                </div>
+              </footer>
+            </section>
+
+            <aside class="knowledge-column" aria-label="Current knowledge and sources">
+              <div class="knowledge-topline"><span class="knowledge-pulse" aria-hidden="true"></span> LIVE KNOWLEDGE PREVIEW <span class="version-id"># daily-work-systems</span></div>
+              <div class="knowledge-card">
+                <div class="knowledge-card-head"><span class="small-icon" aria-hidden="true">✳</span><span id="node-status" class="node-status">ORIGINAL IDEA</span></div>
+                <p class="knowledge-overline">YOUR THINKING ON</p>
+                <h4>Designing a better workday</h4>
+                <div class="knowledge-divider"></div>
+                <p id="knowledge-text">A fixed schedule reduces daily decisions and increases focus.</p>
+                <div class="knowledge-card-bottom"><span id="knowledge-version">REVISION 01 · AUG 12</span><span id="source-count">1 SOURCE</span></div>
+              </div>
+              <div id="evidence-panel" class="evidence-panel" hidden aria-label="Original source evidence">
+                <div class="evidence-heading"><span>ORIGINAL SOURCES</span><span class="evidence-verified">TWO SYNTHETIC NOTES</span></div>
+                <article class="evidence-source"><div class="evidence-meta"><span>SOURCE 01 / AUG 12, 2026</span><span>OLD CLAIM</span></div><p>“A fixed daily schedule helps me focus. If I plan everything in advance, I waste less time deciding what to do.”</p><span>Supports: structure reduces decisions.</span></article>
+                <article class="evidence-source"><div class="evidence-meta"><span>SOURCE 02 / OCT 28, 2026</span><span>NEW CONSTRAINT</span></div><p>“I noticed that an overly rigid schedule makes me less adaptable. Keeping a few flexible hours actually helps.”</p><span>Supports: flexibility helps adaptation.</span></article>
+                <div class="evidence-disclaimer">These are fictional excerpts, not verified real-world claims or output from a live AI model.</div>
+              </div>
+              <div class="knowledge-caption"><span class="caption-lock" aria-hidden="true">♧</span> Your changes are simulated on this page only. No information is saved or sent anywhere.</div>
+            </aside>
+          </div>
+          <p id="status-announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+        <noscript><p class="noscript-message">This interactive preview requires JavaScript. It does not require an account, API key, microphone, or data upload.</p></noscript>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="what-next section-width" aria-labelledby="what-next-heading">
+      <div class="what-next-main">
+        <p class="eyebrow eyebrow-dark">BUILT FOR LONG-TERM THINKING</p>
+        <h2 id="what-next-heading">More than transcription.<br><em>A history of becoming.</em></h2>
+        <p>X-Wiki is an open-source experiment in evidence-linked, evolving personal knowledge. The demo above is deliberately synthetic; the real project currently uses a local-first Mac pipeline to compile private voice notes into Markdown knowledge.</p>
+        <div class="what-next-actions"><a class="button button-dark" href="https://github.com/1998x-stack/X-Wiki" rel="noopener noreferrer" target="_blank">Explore the project ↗</a><a class="text-link" href="../">Browse the public Wiki →</a></div>
+      </div>
+      <div class="principles">
+        <div><span>01 /</span><strong>Always show the source</strong><p>Evidence over confident-sounding guesses.</p></div>
+        <div><span>02 /</span><strong>Never rewrite without consent</strong><p>You approve how your thinking evolves.</p></div>
+        <div><span>03 /</span><strong>Built to be owned, not rented</strong><p>Portable Markdown and versioned knowledge.</p></div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="section-width footer-row"><span><strong>X–Wiki</strong> / Your second brain that evolves</span><span>Fictional interactive demo · No personal data</span><a href="https://github.com/1998x-stack/X-Wiki">Open source ↗</a></div>
+  </footer>
+</body>
+</html>

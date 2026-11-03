@@ -26,3 +26,16 @@ jobs:
       - run: python scripts/release_gate.py > sites/.site-docs/release-manifest.json
       - run: mkdocs build --strict
       - run: test -s sites/site/release-manifest.json
+      - run: test -s sites/site/demo/index.html && test -s sites/site/demo/demo.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --no-save --no-package-lock @playwright/test@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config tests/e2e/playwright.config.cjs
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ux-001-browser-failures
+          path: test-results/
+          if-no-files-found: ignore

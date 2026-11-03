@@ -1,6 +1,6 @@
 # X-Wiki
 
-> [Product PRD / 产品需求文档](docs/product/PRD.md) · UX-001 — The First 90 Seconds
+> [Product PRD / 产品需求文档](docs/product/PRD.md) · [Try the interactive demo](https://1998x-stack.github.io/X-Wiki/demo/) · UX-001 — The First 90 Seconds
 
 X-Wiki 把 iPhone Voice Memos 持续转化为可追溯的 Markdown 知识库：
 
@@ -72,3 +72,15 @@ remain outside navigation.
 ## Durable compilation recovery
 
 Writeback now creates a fsynced transaction journal in `.state/compile-transactions/` before changing any live Wiki files. Interrupted attempts are recovered on the next scan, and divergent manual edits are never silently overwritten. See `docs/architecture/durable-compile.md`.
+
+## UX-001 — The First 90 Seconds
+
+Try the [no-signup browser demo](https://1998x-stack.github.io/X-Wiki/demo/):
+old idea → new note → connection → suggested revision → source evidence →
+approval/rejection (with undo/reset). This static story uses fictional source
+excerpts, runs no AI, asks for no microphone or account permissions, and
+makes no analytics requests. Approval affects only in-memory demo UI.
+
+Review the [UX-001 acceptance contract](docs/product/PRD.md) and the
+[browser E2E suite](tests/e2e/ux-001.spec.cjs) before using this demo as
+a Product Hunt acquisition entry point.

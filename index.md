@@ -4,6 +4,8 @@
 
 # X-Wiki
 
+<p class="xw-demo-cta"><a href="demo/"><strong>体验 X-Wiki 的 90 秒交互演示</strong><span>免安装 · 免注册 · 无需个人录音 →</span></a></p>
+
 <p class="xw-lead">把低摩擦的语音捕捉，转化为可追溯、可连接、会持续生长的长期知识。iPhone 负责记录，Mac 在本地完成转写和编译，公开页面只呈现知识层。</p>
 
 <div class="xw-status">

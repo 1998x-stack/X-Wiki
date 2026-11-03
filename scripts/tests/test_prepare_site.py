@@ -45,3 +45,38 @@ def test_prepare_copies_site_assets_and_never_raw(tmp_path: Path) -> None:
 def test_output_guard_rejects_repository(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="protected"):
         reset_output(tmp_path, tmp_path)
+
+
+def test_prepare_copies_only_allowlisted_demo_files(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    (repo / "wiki").mkdir(parents=True)
+    (repo / "sites" / "content" / "demo").mkdir(parents=True)
+    (repo / "index.md").write_text("# Index\n", encoding="utf-8")
+    (repo / "wiki" / "test.md").write_text("# Test\n", encoding="utf-8")
+    source = repo / "sites" / "content" / "demo"
+    for name in ("index.html", "demo.css", "demo.js"):
+        (source / name).write_text(f"safe: {name}", encoding="utf-8")
+    (source / "unapproved.txt").write_text("private", encoding="utf-8")
+
+    output = tmp_path / "out"
+    prepare(repo, output)
+    assert sorted(p.name for p in (output / "demo").iterdir()) == [
+        "demo.css", "demo.js", "index.html"
+    ]
+    assert not (output / "demo" / "unapproved.txt").exists()
+    assert not (output / "raw").exists()
+
+
+def test_prepare_rejects_symlinked_demo_assets(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    (repo / "wiki").mkdir(parents=True)
+    demo = repo / "sites" / "content" / "demo"
+    demo.mkdir(parents=True)
+    (repo / "index.md").write_text("# Index\n", encoding="utf-8")
+    (repo / "wiki" / "test.md").write_text("# Test\n", encoding="utf-8")
+    for name in ("index.html", "demo.css"):
+        (demo / name).write_text("safe", encoding="utf-8")
+    (demo / "demo.js").symlink_to(repo / "index.md")
+
+    with pytest.raises(ValueError, match="symlink"):
+        prepare(repo, tmp_path / "out")
