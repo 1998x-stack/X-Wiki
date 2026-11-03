@@ -1,0 +1,26 @@
+name: macOS Core Smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-core:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest==8.4.2
+      - name: Test staged compilation and local release recovery
+        run: |
+          pytest -q scripts/tests/test_staged_compiler.py \
+            scripts/tests/test_release_gate.py \
+            scripts/tests/test_verify_deployment.py \
+            scripts/tests/test_mkdocs_nav.py

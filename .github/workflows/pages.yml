@@ -11,6 +11,8 @@ on:
       - "scripts/wiki_links.py"
       - "scripts/wiki_lint.py"
       - "scripts/release_gate.py"
+      - "scripts/mkdocs_nav.py"
+      - "scripts/verify_deployment.py"
       - "scripts/evaluate_wiki.py"
       - "evaluation/golden/**"
       - "sites/assets/**"
@@ -69,3 +71,21 @@ jobs:
       - name: Deploy GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify live Pages content matches deployed commit
+        env:
+          XWIKI_DEPLOYED_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python scripts/verify_deployment.py --repo . \
+            --site-url "$XWIKI_DEPLOYED_URL" \
+            --max-wait 180 --receipt deployment-receipt.json
+      - name: Store verified deployment receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-receipt-${{ github.sha }}
+          path: deployment-receipt.json
+          retention-days: 90
+          if-no-files-found: error
