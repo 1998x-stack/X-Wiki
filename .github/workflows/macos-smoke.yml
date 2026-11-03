@@ -31,4 +31,6 @@ jobs:
             tests/integration/sqlite/test_migrations.py \
             tests/integration/sqlite/test_legacy.py \
             tests/integration/sqlite/test_repositories.py \
-            tests/integration/source/test_source_import.py
+            tests/integration/source/test_source_import.py \
+            tests/integration/jobs/test_job_repository.py \
+            tests/integration/jobs/test_transcription_service.py

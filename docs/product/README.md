@@ -11,6 +11,8 @@
 
 ## 当前工程演进
 
+- [UX-002B 持久音频转写队列](stages/UX-002B-Implementation.md)：SQLite 租约、可恢复尝试、私有转写修订和本地 MLX 适配器。
+
 - [UX-002A 真实文件可靠导入](stages/UX-002A-Implementation.md)：独立私有 Blob Store、验证后保存、重复导入幂等、错误回滚。尚无 Mac 桌面 UI。
 
 - [ARCH-00C 私有与公开执行边界](../architecture/adr-00c-private-public-boundary.md)：私有候选、人工文件审批、公开提升分离；仅代码级阶段，无真实用户身份授权。

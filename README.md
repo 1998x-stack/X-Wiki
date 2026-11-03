@@ -164,3 +164,25 @@ out of scope. The existing Voice Memos CLI is not modified here. This remains
 an initial CLI, not yet a macOS application with drag-and-drop onboarding.
 
 See [UX-002A verification and recovery](docs/product/stages/UX-002A-Implementation.md).
+
+
+## UX-002B — Durable local audio transcription (experimental)
+
+Once a real audio source is stored with `xwiki-import`, it can be queued
+for **local** MLX Whisper processing without publishing the audio or its text.
+Provide an already-installed local MLX model folder:
+
+```bash
+xwiki-import import /path/to/memo.wav
+xwiki-jobs enqueue <source_id> --model-dir /path/to/local-model
+xwiki-jobs run-once --model-dir /path/to/local-model
+xwiki-jobs status <job_id>
+xwiki-jobs export-transcript <job_id> /path/to/new-transcript.txt
+```
+
+Jobs persist in `.state/product.sqlite`; complete revision text is private
+in `.state/transcript-store/`. The native model is **not** downloaded by the
+job command; MLX Whisper needs an Apple Silicon Mac and a separate installation.
+There is no automated long-running scheduler, GUI or public upload.
+A synthetic macOS CI test does not replace a real-device inference check.
+[Implementation, safety limits and recovery guide](docs/product/stages/UX-002B-Implementation.md).
