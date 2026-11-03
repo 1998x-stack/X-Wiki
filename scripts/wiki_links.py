@@ -106,8 +106,13 @@ def convert_links(
             target, separator, label = inner.partition("|")
             link = WikiLink(
                 target.strip(),
-                label.strip() if separator else target.split("#", 1)[0].split("/")[-1]
-                .replace("-", " ").title(),
+                (
+                    label.strip()
+                    if separator
+                    else "本地证据"
+                    if target.strip().startswith("raw/voice/")
+                    else target.split("#", 1)[0].split("/")[-1].replace("-", " ").title()
+                ),
                 line,
             )
             try:

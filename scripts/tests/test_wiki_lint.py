@@ -178,3 +178,15 @@ def test_adr_filename_can_start_with_numeric_sequence(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     assert not errors(repo)
+
+
+def test_private_voice_reference_without_alias_hides_recording_id(tmp_path: Path) -> None:
+    root = tmp_path
+    (root / "wiki").mkdir()
+    current = root / "wiki" / "page.md"
+    original = "[[raw/voice/2026/11/private-recording-1234]]"
+    rendered = convert_links(original, current, root, strict=True)
+    assert 'class="local-evidence"' in rendered
+    assert "private-recording" not in rendered
+    assert "2026/11" not in rendered
+    assert "本地证据" in rendered

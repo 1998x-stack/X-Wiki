@@ -24,6 +24,7 @@ from import_voice_memos import (
     sha256_file,
     write_raw,
 )
+from release_gate import publish_head
 from wiki_lint import lint_wiki
 from xwiki_config import Settings
 
@@ -255,13 +256,8 @@ def git_publish(repo: Path, remote: str, branch: str) -> PublishResult:
         )
     elif staged.returncode != 0:
         raise subprocess.CalledProcessError(staged.returncode, staged.args)
-    subprocess.run(["git", "push", remote, f"HEAD:refs/heads/{branch}"], cwd=repo, check=True)
-    commit_sha = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=repo, check=True, capture_output=True, text=True
-    ).stdout.strip()
-    if not commit_sha:
-        raise RuntimeError("Cannot resolve published commit SHA")
-    return PublishResult(commit_sha=commit_sha, remote=remote, branch=branch)
+    manifest = publish_head(repo, remote, branch)
+    return PublishResult(commit_sha=manifest.commit_sha, remote=remote, branch=branch)
 
 
 def process(args: argparse.Namespace, settings: Settings) -> int:

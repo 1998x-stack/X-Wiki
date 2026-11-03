@@ -10,6 +10,9 @@ on:
       - "scripts/prepare_site.py"
       - "scripts/wiki_links.py"
       - "scripts/wiki_lint.py"
+      - "scripts/release_gate.py"
+      - "scripts/evaluate_wiki.py"
+      - "evaluation/golden/**"
       - "sites/assets/**"
       - "sites/content/**"
       - "sites/overrides/**"
@@ -27,7 +30,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest==8.4.2 ruff==0.13.2
+      - run: ruff check .
+      - run: pytest
+      - run: python scripts/evaluate_wiki.py
+      - run: python scripts/wiki_lint.py --strict
   build:
+    needs: quality
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +53,9 @@ jobs:
       - run: pip install -r sites/requirements-site.txt
       - run: python scripts/wiki_lint.py --strict
       - run: python scripts/prepare_site.py --strict
+      - run: python scripts/release_gate.py > sites/.site-docs/release-manifest.json
       - run: mkdocs build --strict
+      - run: test -s sites/site/release-manifest.json
       - uses: actions/upload-pages-artifact@v3
         with:
           path: sites/site
